@@ -4,78 +4,172 @@ import {
   fetchRedditPost,
   fetchRedditUserPosts,
   fetchRedditUserComments,
-  searchRedditForUser,
+  fetchRedditUserOverview,
+  deepSearchReddit,
+  fetchArcticShiftPosts,
+  fetchArcticShiftComments,
+  extractCommentsFromPost,
   RedditPost,
   RedditComment,
 } from "@/lib/reddit";
+import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { cookies } from "next/headers";
+
+function dedup<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
+
+async function getOrCreateSessionId(): Promise<string> {
+  const cookieStore = await cookies();
+  let sid = cookieStore.get("ttp_anon_sid")?.value;
+  if (!sid) {
+    sid = crypto.randomUUID();
+    cookieStore.set("ttp_anon_sid", sid, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  }
+  return sid;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
 
   if (!username || username.trim().length === 0) {
-    return NextResponse.json(
-      { error: "Username is required" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Username is required" }, { status: 400 });
   }
 
-  // Sanitize username - only allow alphanumeric, underscores, hyphens
   const sanitized = username.trim().replace(/[^a-zA-Z0-9_-]/g, "");
   if (sanitized.length === 0 || sanitized.length > 50) {
-    return NextResponse.json(
-      { error: "Invalid username" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid username" }, { status: 400 });
+  }
+
+  // ── AUTH & CREDITS ────────────────────────────────────────────────────────
+  const session = await getSession();
+  let userId: string | null = null;
+  let creditsRemaining = 0;
+  let canSeeAll = false;
+
+  if (session) {
+    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    }
+    userId = user.id;
+    const userIsPaid = user.isPaid || user.role === "admin";
+    canSeeAll = userIsPaid;
+
+    if (userIsPaid) {
+      creditsRemaining = -1; // unlimited
+    } else {
+      if (user.searchCredits <= 0) {
+        return NextResponse.json(
+          { error: "No search credits remaining. Upgrade to paid for unlimited searches.", creditsRemaining: 0 },
+          { status: 403 }
+        );
+      }
+      creditsRemaining = user.searchCredits - 1;
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { searchCredits: { decrement: 1 } },
+      });
+    }
+  } else {
+    // Anonymous user — track by session cookie
+    const sessionId = await getOrCreateSessionId();
+    const anonRecord = await prisma.anonCredit.findUnique({ where: { sessionId } });
+    const used = anonRecord?.creditsUsed ?? 0;
+    const ANON_LIMIT = 5;
+    if (used >= ANON_LIMIT) {
+      return NextResponse.json(
+        { error: "Free searches used up. Sign up for 20 free credits!", creditsRemaining: 0 },
+        { status: 403 }
+      );
+    }
+    if (anonRecord) {
+      await prisma.anonCredit.update({
+        where: { sessionId },
+        data: { creditsUsed: { increment: 1 } },
+      });
+    } else {
+      await prisma.anonCredit.create({
+        data: { sessionId, creditsUsed: 1 },
+      });
+    }
+    creditsRemaining = ANON_LIMIT - used - 1;
   }
 
   try {
+    // ── OPTIMIZED DEEP SEARCH ───────────────────────────────────────────────
+    // Run the most productive sources in parallel — skip slow subreddit scan
+    const [
+      googleUrls,
+      arcticPosts,
+      arcticComments,
+      redditPosts,
+      redditComments,
+      overview,
+      searchPosts,
+    ] = await Promise.all([
+      searchGoogleForRedditUser(sanitized, 5),
+      fetchArcticShiftPosts(sanitized),
+      fetchArcticShiftComments(sanitized),
+      fetchRedditUserPosts(sanitized),
+      fetchRedditUserComments(sanitized),
+      fetchRedditUserOverview(sanitized),
+      deepSearchReddit(sanitized),
+    ]);
+
     let posts: RedditPost[] = [];
     let comments: RedditComment[] = [];
 
-    // Fetch posts and comments in parallel
-    const [googleUrls, userComments] = await Promise.all([
-      searchGoogleForRedditUser(sanitized, 3),
-      fetchRedditUserComments(sanitized, 100),
-    ]);
+    posts.push(...arcticPosts, ...redditPosts, ...overview.posts, ...searchPosts);
+    comments.push(...arcticComments, ...redditComments, ...overview.comments);
 
-    comments = userComments;
-
+    // Google CSE posts + thread comment extraction
     if (googleUrls.length > 0) {
-      // Fetch individual post data from Google results
-      const postPromises = googleUrls.map((url) => fetchRedditPost(url));
-      const results = await Promise.allSettled(postPromises);
-      posts = results
-        .filter(
-          (r): r is PromiseFulfilledResult<RedditPost | null> =>
-            r.status === "fulfilled" && r.value !== null
-        )
-        .map((r) => r.value!);
+      const batch = googleUrls.slice(0, 20);
+      const results = await Promise.allSettled(
+        batch.map(async (url) => {
+          const [post, threadComments] = await Promise.all([
+            fetchRedditPost(url),
+            extractCommentsFromPost(url, sanitized),
+          ]);
+          return { post, threadComments };
+        })
+      );
+      for (const r of results) {
+        if (r.status === "fulfilled") {
+          if (r.value.post) posts.push(r.value.post);
+          comments.push(...r.value.threadComments);
+        }
+      }
     }
 
-    // Also fetch from Reddit user API and merge
-    const redditPosts = await fetchRedditUserPosts(sanitized, 100);
-    posts = [...posts, ...redditPosts];
+    // Final dedup + sort by newest first
+    posts = dedup(posts).sort((a, b) => b.created_utc - a.created_utc);
+    comments = dedup(comments).sort((a, b) => b.created_utc - a.created_utc);
 
-    // If still nothing, try search fallback
-    if (posts.length === 0) {
-      posts = await searchRedditForUser(sanitized);
-    }
-
-    // Deduplicate posts by ID
-    const seenPosts = new Set<string>();
-    posts = posts.filter((post) => {
-      if (seenPosts.has(post.id)) return false;
-      seenPosts.add(post.id);
-      return true;
-    });
-
-    // Deduplicate comments by ID
-    const seenComments = new Set<string>();
-    comments = comments.filter((comment) => {
-      if (seenComments.has(comment.id)) return false;
-      seenComments.add(comment.id);
-      return true;
+    // Log the search
+    const sessionId = await getOrCreateSessionId();
+    await prisma.searchLog.create({
+      data: {
+        userId,
+        sessionId,
+        searchedUsername: sanitized,
+        postCount: posts.length,
+        commentCount: comments.length,
+      },
     });
 
     return NextResponse.json({
@@ -84,6 +178,8 @@ export async function GET(request: NextRequest) {
       commentCount: comments.length,
       posts,
       comments,
+      creditsRemaining,
+      canSeeAll,
     });
   } catch {
     return NextResponse.json(
