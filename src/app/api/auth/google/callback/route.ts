@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exchangeGoogleCode, createToken, setSessionCookie } from "@/lib/auth";
+import { exchangeGoogleCode, createToken } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const appUrl = process.env.APP_URL || request.nextUrl.origin;
+
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const { allowed } = rateLimit(`google-auth:${ip}`, 20, 15 * 60 * 1000);
   if (!allowed) {
-    return NextResponse.redirect(new URL("/signin?error=rate_limit", request.url));
+    return NextResponse.redirect(new URL("/signin?error=rate_limit", appUrl));
   }
 
   const code = request.nextUrl.searchParams.get("code");
   const error = request.nextUrl.searchParams.get("error");
 
   if (error || !code) {
-    return NextResponse.redirect(new URL("/signin?error=google_denied", request.url));
+    return NextResponse.redirect(new URL("/signin?error=google_denied", appUrl));
   }
 
   try {
@@ -69,10 +71,19 @@ export async function GET(request: NextRequest) {
       role: user.role,
     });
 
-    await setSessionCookie(token);
+    const appUrl = process.env.APP_URL || request.nextUrl.origin;
+    const response = NextResponse.redirect(new URL("/", appUrl));
+    response.cookies.set("ttp_session", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
 
-    return NextResponse.redirect(new URL("/", request.url));
+    return response;
   } catch {
-    return NextResponse.redirect(new URL("/signin?error=google_failed", request.url));
+    const appUrl = process.env.APP_URL || request.nextUrl.origin;
+    return NextResponse.redirect(new URL("/signin?error=google_failed", appUrl));
   }
 }
