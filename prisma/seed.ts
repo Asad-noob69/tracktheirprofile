@@ -1,6 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client.js";
-import bcrypt from "bcryptjs";
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
@@ -18,13 +17,10 @@ async function main() {
     return;
   }
 
-  const hashed = await bcrypt.hash("admin123", 12);
-
   const admin = await prisma.user.create({
     data: {
       email,
       username: "admin",
-      password: hashed,
       role: "admin",
     },
   });
@@ -32,8 +28,8 @@ async function main() {
   console.log("Admin user created:");
   console.log(`  Email: ${admin.email}`);
   console.log(`  Username: ${admin.username}`);
-  console.log(`  Password: admin123`);
   console.log(`  Role: ${admin.role}`);
+  console.log("  Note: Link a Google account by signing in with this email.");
 }
 
 main().catch(console.error);

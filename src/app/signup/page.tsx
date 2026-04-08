@@ -1,42 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default function SignUpPage() {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+function SignUpContent() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Signup failed");
-        return;
-      }
-
-      window.location.href = "/";
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+  const errorMessages: Record<string, string> = {
+    google_denied: "Google sign-in was cancelled. Please try again.",
+    google_failed: "Google sign-in failed. Please try again.",
+    rate_limit: "Too many attempts. Please try again later.",
   };
 
   return (
@@ -47,96 +21,62 @@ export default function SignUpPage() {
             Create your account
           </h1>
           <p className="text-zinc-400">
-            Join TrackTheirProfile to get started
+            Join TrackTheirProfile with your Google account
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-xl border border-card-border bg-card-bg p-6"
-        >
-          {error && (
+        <div className="rounded-xl border border-card-border bg-card-bg p-6">
+          {error && errorMessages[error] && (
             <div className="mb-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
-              {error}
+              {errorMessages[error]}
             </div>
           )}
 
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="mb-1.5 block text-sm font-medium text-zinc-300"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-lg border border-card-border bg-background px-4 py-2.5 text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="mb-1.5 block text-sm font-medium text-zinc-300"
-            >
-              Username
-            </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              minLength={3}
-              maxLength={30}
-              className="w-full rounded-lg border border-card-border bg-background px-4 py-2.5 text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
-              placeholder="Choose a username"
-            />
-          </div>
-
-          <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm font-medium text-zinc-300"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full rounded-lg border border-card-border bg-background px-4 py-2.5 text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
-              placeholder="At least 6 characters"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-green-accent py-2.5 font-semibold text-black transition-colors hover:bg-green-400 disabled:opacity-50"
+          <a
+            href="/api/auth/google"
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-card-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-green-accent/30 hover:bg-card-bg"
           >
-            {loading ? "Creating account..." : "Sign Up"}
-          </button>
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Sign up with Google
+          </a>
 
-          <p className="mt-4 text-center text-sm text-zinc-500">
-            Already have an account?{" "}
-            <Link
-              href="/signin"
-              className="text-green-accent hover:text-green-400"
-            >
-              Sign in
-            </Link>
+          <p className="mt-4 text-center text-xs text-zinc-500">
+            By signing up, you agree to our terms of service.
           </p>
-        </form>
+
+          <p className="mt-3 text-center text-sm text-zinc-500">
+            Already have an account?{" "}
+            <a href="/signin" className="text-green-accent hover:text-green-400">
+              Sign in
+            </a>
+          </p>
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="flex flex-1 items-center justify-center"><div className="h-10 w-10 animate-spin rounded-full border-2 border-card-border border-t-green-accent"></div></div>}>
+      <SignUpContent />
+    </Suspense>
   );
 }

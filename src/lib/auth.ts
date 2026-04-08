@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import bcrypt from "bcryptjs";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "tracktheirprofile-default-secret-change-me"
@@ -13,17 +12,6 @@ export interface SessionPayload {
   email: string;
   username: string;
   role: string;
-}
-
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
-}
-
-export async function verifyPassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
-  return bcrypt.compare(password, hash);
 }
 
 export async function createToken(payload: SessionPayload): Promise<string> {
@@ -66,4 +54,57 @@ export async function setSessionCookie(token: string) {
 export async function clearSessionCookie() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+}
+
+export function getGoogleOAuthURL() {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const redirectUri = `${process.env.APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
+
+  const params = new URLSearchParams({
+    client_id: clientId!,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: "openid email profile",
+    access_type: "offline",
+    prompt: "consent",
+  });
+
+  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
+
+export async function exchangeGoogleCode(code: string) {
+  const redirectUri = `${process.env.APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
+
+  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      redirect_uri: redirectUri,
+      grant_type: "authorization_code",
+    }),
+  });
+
+  if (!tokenRes.ok) {
+    throw new Error("Failed to exchange Google auth code");
+  }
+
+  const tokens = await tokenRes.json();
+
+  const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    headers: { Authorization: `Bearer ${tokens.access_token}` },
+  });
+
+  if (!userRes.ok) {
+    throw new Error("Failed to fetch Google user info");
+  }
+
+  return userRes.json() as Promise<{
+    id: string;
+    email: string;
+    name: string;
+    picture: string;
+  }>;
 }

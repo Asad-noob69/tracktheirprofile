@@ -42,6 +42,8 @@ async function getOrCreateSessionId(): Promise<string> {
   return sid;
 }
 
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
@@ -121,55 +123,89 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // ── OPTIMIZED DEEP SEARCH ───────────────────────────────────────────────
-    // Run the most productive sources in parallel — skip slow subreddit scan
-    const [
-      googleUrls,
-      arcticPosts,
-      arcticComments,
-      redditPosts,
-      redditComments,
-      overview,
-      searchPosts,
-    ] = await Promise.all([
-      searchGoogleForRedditUser(sanitized, 5),
-      fetchArcticShiftPosts(sanitized),
-      fetchArcticShiftComments(sanitized),
-      fetchRedditUserPosts(sanitized),
-      fetchRedditUserComments(sanitized),
-      fetchRedditUserOverview(sanitized),
-      deepSearchReddit(sanitized),
-    ]);
+    // ── CHECK CACHE ─────────────────────────────────────────────────────────
+    const cached = await prisma.searchCache.findUnique({
+      where: { searchedUsername: sanitized.toLowerCase() },
+    });
 
-    let posts: RedditPost[] = [];
-    let comments: RedditComment[] = [];
+    let posts: RedditPost[];
+    let comments: RedditComment[];
+    let fromCache = false;
 
-    posts.push(...arcticPosts, ...redditPosts, ...overview.posts, ...searchPosts);
-    comments.push(...arcticComments, ...redditComments, ...overview.comments);
+    if (cached && Date.now() - cached.updatedAt.getTime() < CACHE_TTL_MS) {
+      // Cache hit — return cached results
+      posts = JSON.parse(cached.postsJson);
+      comments = JSON.parse(cached.commentsJson);
+      fromCache = true;
+    } else {
+      // ── DEEP SEARCH ───────────────────────────────────────────────────────
+      const [
+        googleUrls,
+        arcticPosts,
+        arcticComments,
+        redditPosts,
+        redditComments,
+        overview,
+        searchPosts,
+      ] = await Promise.all([
+        searchGoogleForRedditUser(sanitized, 5),
+        fetchArcticShiftPosts(sanitized),
+        fetchArcticShiftComments(sanitized),
+        fetchRedditUserPosts(sanitized),
+        fetchRedditUserComments(sanitized),
+        fetchRedditUserOverview(sanitized),
+        deepSearchReddit(sanitized),
+      ]);
 
-    // Google CSE posts + thread comment extraction
-    if (googleUrls.length > 0) {
-      const batch = googleUrls.slice(0, 20);
-      const results = await Promise.allSettled(
-        batch.map(async (url) => {
-          const [post, threadComments] = await Promise.all([
-            fetchRedditPost(url),
-            extractCommentsFromPost(url, sanitized),
-          ]);
-          return { post, threadComments };
-        })
-      );
-      for (const r of results) {
-        if (r.status === "fulfilled") {
-          if (r.value.post) posts.push(r.value.post);
-          comments.push(...r.value.threadComments);
+      posts = [];
+      comments = [];
+
+      posts.push(...arcticPosts, ...redditPosts, ...overview.posts, ...searchPosts);
+      comments.push(...arcticComments, ...redditComments, ...overview.comments);
+
+      // Google CSE posts + thread comment extraction
+      if (googleUrls.length > 0) {
+        const batch = googleUrls.slice(0, 20);
+        const results = await Promise.allSettled(
+          batch.map(async (url) => {
+            const [post, threadComments] = await Promise.all([
+              fetchRedditPost(url),
+              extractCommentsFromPost(url, sanitized),
+            ]);
+            return { post, threadComments };
+          })
+        );
+        for (const r of results) {
+          if (r.status === "fulfilled") {
+            if (r.value.post) posts.push(r.value.post);
+            comments.push(...r.value.threadComments);
+          }
         }
       }
-    }
 
-    // Final dedup + sort by newest first
-    posts = dedup(posts).sort((a, b) => b.created_utc - a.created_utc);
-    comments = dedup(comments).sort((a, b) => b.created_utc - a.created_utc);
+      // Final dedup + sort by newest first
+      posts = dedup(posts).sort((a, b) => b.created_utc - a.created_utc);
+      comments = dedup(comments).sort((a, b) => b.created_utc - a.created_utc);
+
+      // ── UPDATE CACHE ──────────────────────────────────────────────────────
+      const cacheKey = sanitized.toLowerCase();
+      await prisma.searchCache.upsert({
+        where: { searchedUsername: cacheKey },
+        update: {
+          postsJson: JSON.stringify(posts),
+          commentsJson: JSON.stringify(comments),
+          postCount: posts.length,
+          commentCount: comments.length,
+        },
+        create: {
+          searchedUsername: cacheKey,
+          postsJson: JSON.stringify(posts),
+          commentsJson: JSON.stringify(comments),
+          postCount: posts.length,
+          commentCount: comments.length,
+        },
+      });
+    }
 
     // Log the search
     const sessionId = await getOrCreateSessionId();
@@ -196,6 +232,7 @@ export async function GET(request: NextRequest) {
       comments: visibleComments,
       creditsRemaining,
       canSeeAll,
+      fromCache,
     });
   } catch {
     return NextResponse.json(
