@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -59,6 +58,12 @@ interface Stats {
 type Tab = "overview" | "users" | "searches" | "cache";
 
 export default function AdminDashboard() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
@@ -70,24 +75,51 @@ export default function AdminDashboard() {
   const [userSearch, setUserSearch] = useState("");
   const [userFilter, setUserFilter] = useState("all");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const router = useRouter();
+
+  async function handleAdminLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setLoginError("");
+    setLoginLoading(true);
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+      });
+      if (!res.ok) {
+        setLoginError("Invalid username or password");
+        return;
+      }
+      setAuthenticated(true);
+      fetchData();
+      fetchCache();
+    } catch {
+      setLoginError("Something went wrong");
+    } finally {
+      setLoginLoading(false);
+    }
+  }
+
+  async function handleAdminLogout() {
+    await fetch("/api/admin/auth", { method: "DELETE" });
+    setAuthenticated(false);
+  }
 
   async function fetchData(search = "", filter = "all") {
     try {
-      const meRes = await fetch("/api/auth/me");
-      const meData = await meRes.json();
-      if (!meData.user || meData.user.role !== "admin") {
-        router.push("/");
-        return;
-      }
-
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (filter !== "all") params.set("filter", filter);
 
       const res = await fetch(`/api/admin/users?${params}`);
+      if (res.status === 403) {
+        setAuthenticated(false);
+        setLoading(false);
+        return;
+      }
       if (!res.ok) return;
 
+      setAuthenticated(true);
       const data = await res.json();
       setUsers(data.users);
       setStats(data.stats);
@@ -114,6 +146,7 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
+    // Check if already authenticated via cookie
     fetchData();
     fetchCache();
   }, []);
@@ -179,6 +212,59 @@ export default function AdminDashboard() {
     );
   }
 
+  if (!authenticated) {
+    return (
+      <div className="flex flex-1 items-center justify-center px-4 py-16">
+        <div className="w-full max-w-sm">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-accent/10 border border-green-accent/20">
+              <svg className="h-7 w-7 text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">Admin Access</h1>
+            <p className="mt-1 text-sm text-zinc-500">Enter your credentials to continue</p>
+          </div>
+          <form onSubmit={handleAdminLogin} className="rounded-xl border border-card-border bg-card-bg p-6">
+            {loginError && (
+              <div className="mb-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">{loginError}</div>
+            )}
+            <div className="mb-4">
+              <label className="mb-1.5 block text-sm font-medium text-zinc-300">Username</label>
+              <input
+                type="text"
+                value={loginUsername}
+                onChange={(e) => setLoginUsername(e.target.value)}
+                required
+                autoFocus
+                className="w-full rounded-lg border border-card-border bg-background px-4 py-2.5 text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
+                placeholder="Admin username"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="mb-1.5 block text-sm font-medium text-zinc-300">Password</label>
+              <input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                required
+                className="w-full rounded-lg border border-card-border bg-background px-4 py-2.5 text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
+                placeholder="Admin password"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loginLoading}
+              className="w-full rounded-lg bg-green-accent py-2.5 font-semibold text-black transition-colors hover:bg-green-400 disabled:opacity-50"
+            >
+              {loginLoading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   const maxDaily = Math.max(...dailySearches.map((d) => d.count), 1);
 
   return (
@@ -191,13 +277,22 @@ export default function AdminDashboard() {
           </h1>
           <p className="mt-1 text-sm text-zinc-500">Manage users, monitor searches, and control your platform</p>
         </div>
-        <button
-          onClick={() => { fetchData(userSearch, userFilter); fetchCache(); }}
-          className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-green-accent/30"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { fetchData(userSearch, userFilter); fetchCache(); }}
+            className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-green-accent/30"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            Refresh
+          </button>
+          <button
+            onClick={handleAdminLogout}
+            className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-2 text-sm text-red-400 transition-colors hover:bg-red-500/10"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

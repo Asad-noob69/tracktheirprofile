@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
-  if (!session || session.role !== "admin") {
+  if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
@@ -43,17 +42,11 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
-  if (!session || session.role !== "admin") {
+  if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const { id } = await params;
-
-  if (id === session.userId) {
-    return NextResponse.json({ error: "Cannot modify your own account" }, { status: 403 });
-  }
-
   const body = await request.json();
 
   const data: Record<string, unknown> = {};
@@ -78,16 +71,11 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
-  if (!session || session.role !== "admin") {
+  if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const { id } = await params;
-
-  if (id === session.userId) {
-    return NextResponse.json({ error: "Cannot delete your own account" }, { status: 403 });
-  }
 
   // Delete user's search logs first, then the user
   await prisma.searchLog.deleteMany({ where: { userId: id } });
