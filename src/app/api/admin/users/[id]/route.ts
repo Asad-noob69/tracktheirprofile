@@ -47,11 +47,22 @@ export async function PATCH(
   }
 
   const { id } = await params;
+
+  // Prevent admins from modifying their own account via this endpoint
+  if (id === session.userId) {
+    return NextResponse.json({ error: "Cannot modify your own account" }, { status: 403 });
+  }
+
   const body = await request.json();
 
   const data: Record<string, unknown> = {};
   if (typeof body.isPaid === "boolean") data.isPaid = body.isPaid;
-  if (typeof body.searchCredits === "number") data.searchCredits = body.searchCredits;
+  if (typeof body.searchCredits === "number") {
+    if (body.searchCredits < 0 || body.searchCredits > 1000) {
+      return NextResponse.json({ error: "Credits must be between 0 and 1000" }, { status: 400 });
+    }
+    data.searchCredits = body.searchCredits;
+  }
   if (typeof body.role === "string" && ["user", "admin"].includes(body.role)) data.role = body.role;
 
   if (Object.keys(data).length === 0) {

@@ -15,6 +15,7 @@ import {
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { cookies } from "next/headers";
+import { rateLimit } from "@/lib/rate-limit";
 
 function dedup<T extends { id: string }>(items: T[]): T[] {
   const seen = new Set<string>();
@@ -44,6 +45,16 @@ async function getOrCreateSessionId(): Promise<string> {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
+
+  // Rate limit: 30 searches per 15 min per IP
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const { allowed } = rateLimit(`search:${ip}`, 30, 15 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many searches. Please slow down and try again shortly." },
+      { status: 429 }
+    );
+  }
 
   if (!username || username.trim().length === 0) {
     return NextResponse.json({ error: "Username is required" }, { status: 400 });
@@ -172,12 +183,17 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Enforce paywall server-side — free users only get preview items
+    const FREE_PREVIEW_LIMIT = 10;
+    const visiblePosts = canSeeAll ? posts : posts.slice(0, FREE_PREVIEW_LIMIT);
+    const visibleComments = canSeeAll ? comments : comments.slice(0, FREE_PREVIEW_LIMIT);
+
     return NextResponse.json({
       username: sanitized,
       postCount: posts.length,
       commentCount: comments.length,
-      posts,
-      comments,
+      posts: visiblePosts,
+      comments: visibleComments,
       creditsRemaining,
       canSeeAll,
     });
