@@ -16,6 +16,7 @@ interface SearchResult {
   comments: RedditComment[];
   creditsRemaining: number;
   canSeeAll: boolean;
+  fromCache?: boolean;
 }
 
 interface CreditInfo {
@@ -138,6 +139,24 @@ function SearchContent() {
 
   const canSeeAll = results?.canSeeAll ?? false;
 
+  function exportToCSV(data: SearchResult) {
+    const rows = [["Type", "Subreddit", "Title/Body", "Score", "Date", "URL"]];
+    data.posts.forEach((p) => {
+      rows.push(["Post", p.subreddit_name_prefixed, `"${p.title.replace(/"/g, '""')}"`, String(p.score), new Date(p.created_utc * 1000).toISOString(), p.permalink]);
+    });
+    data.comments.forEach((c) => {
+      rows.push(["Comment", c.subreddit_name_prefixed, `"${c.body.slice(0, 200).replace(/"/g, '""')}"`, String(c.score), new Date(c.created_utc * 1000).toISOString(), c.permalink]);
+    });
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reddit_${data.username}_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6">
       {/* Search bar at top */}
@@ -228,15 +247,36 @@ function SearchContent() {
       {/* Results */}
       {results && !loading && (
         <>
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-foreground">
-              Results for{" "}
-              <span className="text-green-accent">u/{results.username}</span>
-            </h1>
-            <p className="mt-1 text-sm text-zinc-500">
-              Found {results.postCount} post{results.postCount !== 1 ? "s" : ""} and{" "}
-              {results.commentCount} comment{results.commentCount !== 1 ? "s" : ""}
-            </p>
+          <div className="mb-6 flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-foreground">
+                  Results for{" "}
+                  <span className="text-green-accent">u/{results.username}</span>
+                </h1>
+                {results.fromCache && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-accent/10 px-2 py-0.5 text-xs font-medium text-green-accent border border-green-accent/20">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Instant
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-sm text-zinc-500">
+                Found {results.postCount} post{results.postCount !== 1 ? "s" : ""} and{" "}
+                {results.commentCount} comment{results.commentCount !== 1 ? "s" : ""}
+              </p>
+            </div>
+            <button
+              onClick={() => exportToCSV(results)}
+              className="flex items-center gap-1.5 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-green-accent/30 hover:text-green-accent"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </button>
           </div>
 
           {/* Tabs */}

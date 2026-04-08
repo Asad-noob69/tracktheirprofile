@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { exchangeGoogleCode, createToken } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
+import { sendNewUserNotification } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
   const appUrl = process.env.APP_URL || request.nextUrl.origin;
@@ -62,6 +63,9 @@ export async function GET(request: NextRequest) {
           avatarUrl: googleUser.picture,
         },
       });
+
+      // Send admin notification (non-blocking)
+      sendNewUserNotification({ email: user.email, username: user.username }).catch(() => {});
     }
 
     const token = await createToken({

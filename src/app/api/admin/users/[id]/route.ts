@@ -22,6 +22,8 @@ export async function GET(
       role: true,
       isPaid: true,
       searchCredits: true,
+      avatarUrl: true,
+      googleId: true,
       createdAt: true,
       searchLogs: {
         orderBy: { createdAt: "desc" },
@@ -48,7 +50,6 @@ export async function PATCH(
 
   const { id } = await params;
 
-  // Prevent admins from modifying their own account via this endpoint
   if (id === session.userId) {
     return NextResponse.json({ error: "Cannot modify your own account" }, { status: 403 });
   }
@@ -71,4 +72,26 @@ export async function PATCH(
 
   const user = await prisma.user.update({ where: { id }, data });
   return NextResponse.json({ user });
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getSession();
+  if (!session || session.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  if (id === session.userId) {
+    return NextResponse.json({ error: "Cannot delete your own account" }, { status: 403 });
+  }
+
+  // Delete user's search logs first, then the user
+  await prisma.searchLog.deleteMany({ where: { userId: id } });
+  await prisma.user.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
 }
