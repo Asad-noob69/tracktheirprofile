@@ -1,42 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 
-const ADMIN_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "tracktheirprofile-default-secret-change-me"
-);
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("JWT_SECRET environment variable is required in production");
+  }
+  return new TextEncoder().encode(secret || "dev-only-secret-not-for-production");
+}
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const ADMIN_SECRET = getJwtSecret();
+
+function getAdminCredentials() {
+  const username = process.env.ADMIN_USERNAME;
+  const password = process.env.ADMIN_PASSWORD;
+  if (process.env.NODE_ENV === "production" && (!username || !password)) {
+    throw new Error("ADMIN_USERNAME and ADMIN_PASSWORD must be set in production");
+  }
+  return {
+    username: username || "admin",
+    password: password || "admin123",
+  };
+}
+
 const COOKIE_NAME = "ttp_admin";
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const { username, password } = body;
+  try {
+    const body = await request.json();
+    const { username, password } = body;
+    const creds = getAdminCredentials();
 
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    if (username !== creds.username || password !== creds.password) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+
+    const token = await new SignJWT({ admin: true })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("24h")
+      .setIssuedAt()
+      .sign(ADMIN_SECRET);
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
+
+    return response;
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  const token = await new SignJWT({ admin: true })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("24h")
-    .setIssuedAt()
-    .sign(ADMIN_SECRET);
-
-  const response = NextResponse.json({ success: true });
-  response.cookies.set(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24, // 24 hours
-  });
-
-  return response;
 }
 
 export async function GET() {
-  // Check if admin is authenticated — used by admin pages
   return NextResponse.json({ authenticated: false });
 }
 

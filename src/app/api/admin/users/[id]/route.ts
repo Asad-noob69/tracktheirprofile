@@ -10,32 +10,37 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      role: true,
-      isPaid: true,
-      searchCredits: true,
-      avatarUrl: true,
-      googleId: true,
-      createdAt: true,
-      searchLogs: {
-        orderBy: { createdAt: "desc" },
-        take: 100,
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        isPaid: true,
+        searchCredits: true,
+        avatarUrl: true,
+        googleId: true,
+        createdAt: true,
+        searchLogs: {
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        },
       },
-    },
-  });
+    });
 
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ user });
+  } catch (err) {
+    console.error("[admin/users/id] GET failed:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  return NextResponse.json({ user });
 }
 
 export async function PATCH(
@@ -46,25 +51,30 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const { id } = await params;
-  const body = await request.json();
+  try {
+    const { id } = await params;
+    const body = await request.json();
 
-  const data: Record<string, unknown> = {};
-  if (typeof body.isPaid === "boolean") data.isPaid = body.isPaid;
-  if (typeof body.searchCredits === "number") {
-    if (body.searchCredits < 0 || body.searchCredits > 1000) {
-      return NextResponse.json({ error: "Credits must be between 0 and 1000" }, { status: 400 });
+    const data: Record<string, unknown> = {};
+    if (typeof body.isPaid === "boolean") data.isPaid = body.isPaid;
+    if (typeof body.searchCredits === "number") {
+      if (body.searchCredits < 0 || body.searchCredits > 1000) {
+        return NextResponse.json({ error: "Credits must be between 0 and 1000" }, { status: 400 });
+      }
+      data.searchCredits = body.searchCredits;
     }
-    data.searchCredits = body.searchCredits;
-  }
-  if (typeof body.role === "string" && ["user", "admin"].includes(body.role)) data.role = body.role;
+    if (typeof body.role === "string" && ["user", "admin"].includes(body.role)) data.role = body.role;
 
-  if (Object.keys(data).length === 0) {
-    return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
-  }
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
 
-  const user = await prisma.user.update({ where: { id }, data });
-  return NextResponse.json({ user });
+    const user = await prisma.user.update({ where: { id }, data });
+    return NextResponse.json({ user });
+  } catch (err) {
+    console.error("[admin/users/id] PATCH failed:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
 export async function DELETE(
@@ -75,11 +85,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  // Delete user's search logs first, then the user
-  await prisma.searchLog.deleteMany({ where: { userId: id } });
-  await prisma.user.delete({ where: { id } });
+    // Delete user's search logs first, then the user
+    await prisma.searchLog.deleteMany({ where: { userId: id } });
+    await prisma.user.delete({ where: { id } });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("[admin/users/id] DELETE failed:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

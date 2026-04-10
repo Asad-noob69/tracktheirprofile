@@ -100,6 +100,9 @@ function SearchContent() {
         setStageIdx((i) => (i + 1) % SEARCH_STAGES.length);
       }, 3500);
 
+      // Abort after 90 seconds if search hangs
+      const timeout = setTimeout(() => controller.abort(), 90_000);
+
       try {
         const res = await fetch(
           `/api/search?username=${encodeURIComponent(username)}`,
@@ -120,10 +123,15 @@ function SearchContent() {
           .then((d) => setCreditInfo(d))
           .catch(() => {});
       } catch (err) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          setError(err.message || "Something went wrong");
+        if (err instanceof Error) {
+          if (err.name === "AbortError") {
+            setError("Search timed out. The user may have too much activity — please try again.");
+          } else {
+            setError(err.message || "Something went wrong");
+          }
         }
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
         if (stageTimer) clearInterval(stageTimer);
       }

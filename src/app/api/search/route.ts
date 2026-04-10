@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   const username = searchParams.get("username");
 
   // Rate limit: 30 searches per 15 min per IP
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ip = request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const { allowed } = rateLimit(`search:${ip}`, 30, 15 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
@@ -234,7 +234,8 @@ export async function GET(request: NextRequest) {
       canSeeAll,
       fromCache,
     });
-  } catch {
+  } catch (err) {
+    console.error("[search] Failed:", err instanceof Error ? err.message : err);
     return NextResponse.json(
       { error: "Failed to fetch data. Please try again." },
       { status: 500 }

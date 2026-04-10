@@ -7,7 +7,7 @@ import { sendNewUserNotification } from "@/lib/email";
 export async function GET(request: NextRequest) {
   const appUrl = process.env.APP_URL || request.nextUrl.origin;
 
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ip = request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const { allowed } = rateLimit(`google-auth:${ip}`, 20, 15 * 60 * 1000);
   if (!allowed) {
     return NextResponse.redirect(new URL("/signin?error=rate_limit", appUrl));

@@ -1,9 +1,15 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "tracktheirprofile-default-secret-change-me"
-);
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("JWT_SECRET environment variable is required in production");
+  }
+  return new TextEncoder().encode(secret || "dev-only-secret-not-for-production");
+}
+
+const JWT_SECRET = getJwtSecret();
 
 const COOKIE_NAME = "ttp_session";
 

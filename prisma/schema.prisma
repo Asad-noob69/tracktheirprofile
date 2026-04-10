@@ -23,6 +23,10 @@ model User {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   searchLogs    SearchLog[]
+
+  @@index([createdAt])
+  @@index([isPaid])
+  @@index([role])
 }
 
 model SearchLog {
@@ -34,6 +38,11 @@ model SearchLog {
   commentCount     Int      @default(0)
   createdAt        DateTime @default(now())
   user             User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([searchedUsername])
+  @@index([createdAt])
+  @@index([sessionId])
 }
 
 model AnonCredit {
@@ -53,4 +62,6 @@ model SearchCache {
   commentCount     Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  @@index([updatedAt])
 }

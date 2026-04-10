@@ -7,129 +7,140 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const search = searchParams.get("search") || "";
-  const filter = searchParams.get("filter") || "all"; // all, paid, free, admin
+  try {
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search") || "";
+    const filter = searchParams.get("filter") || "all";
 
-  const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = {};
 
-  if (search) {
-    where.OR = [
-      { email: { contains: search, mode: "insensitive" } },
-      { username: { contains: search, mode: "insensitive" } },
-    ];
-  }
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
-  if (filter === "paid") where.isPaid = true;
-  if (filter === "free") where.isPaid = false;
-  if (filter === "admin") where.role = "admin";
+    if (filter === "paid") where.isPaid = true;
+    if (filter === "free") where.isPaid = false;
+    if (filter === "admin") where.role = "admin";
 
-  const users = await prisma.user.findMany({
-    where,
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      role: true,
-      isPaid: true,
-      searchCredits: true,
-      avatarUrl: true,
-      googleId: true,
-      createdAt: true,
-      _count: { select: { searchLogs: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+    // Run independent queries in parallel
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - 7);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
 
-  // Global stats
-  const totalSearches = await prisma.searchLog.count();
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const searchesToday = await prisma.searchLog.count({
-    where: { createdAt: { gte: todayStart } },
-  });
-  const paidUsers = await prisma.user.count({ where: { isPaid: true } });
-  const totalUsers = await prisma.user.count();
+    // Build daily date ranges for batch query
+    const dailyRanges: { start: Date; end: Date; label: string }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const dayStart = new Date();
+      dayStart.setDate(dayStart.getDate() - i);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+      dailyRanges.push({
+        start: dayStart,
+        end: dayEnd,
+        label: dayStart.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
+      });
+    }
 
-  // Searches this week
-  const weekStart = new Date();
-  weekStart.setDate(weekStart.getDate() - 7);
-  const searchesThisWeek = await prisma.searchLog.count({
-    where: { createdAt: { gte: weekStart } },
-  });
-
-  // Anonymous sessions
-  const totalAnonSessions = await prisma.anonCredit.count();
-
-  // Top searched usernames
-  const topSearched = await prisma.searchLog.groupBy({
-    by: ["searchedUsername"],
-    _count: { searchedUsername: true },
-    orderBy: { _count: { searchedUsername: "desc" } },
-    take: 10,
-  });
-
-  // Recent searches
-  const recentSearches = await prisma.searchLog.findMany({
-    take: 30,
-    orderBy: { createdAt: "desc" },
-    include: { user: { select: { username: true, avatarUrl: true } } },
-  });
-
-  // Cache stats
-  const cacheCount = await prisma.searchCache.count();
-
-  // Daily search counts for last 7 days
-  const dailySearches: { date: string; count: number }[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const dayStart = new Date();
-    dayStart.setDate(dayStart.getDate() - i);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(dayStart);
-    dayEnd.setHours(23, 59, 59, 999);
-    const count = await prisma.searchLog.count({
-      where: { createdAt: { gte: dayStart, lte: dayEnd } },
-    });
-    dailySearches.push({
-      date: dayStart.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
-      count,
-    });
-  }
-
-  // New users this week
-  const newUsersThisWeek = await prisma.user.count({
-    where: { createdAt: { gte: weekStart } },
-  });
-
-  return NextResponse.json({
-    users: users.map((u) => ({
-      ...u,
-      searchCount: u._count.searchLogs,
-      _count: undefined,
-    })),
-    stats: {
-      totalUsers,
-      paidUsers,
+    const [
+      users,
       totalSearches,
       searchesToday,
+      paidUsers,
+      totalUsers,
       searchesThisWeek,
       totalAnonSessions,
+      topSearched,
+      recentSearches,
       cacheCount,
       newUsersThisWeek,
-    },
-    topSearched: topSearched.map((t) => ({
-      username: t.searchedUsername,
-      count: t._count.searchedUsername,
-    })),
-    dailySearches,
-    recentSearches: recentSearches.map((s) => ({
-      id: s.id,
-      searchedUsername: s.searchedUsername,
-      postCount: s.postCount,
-      commentCount: s.commentCount,
-      createdAt: s.createdAt,
-      performedBy: s.user?.username ?? "Anonymous",
-      avatarUrl: s.user?.avatarUrl ?? null,
-    })),
-  });
+      ...dailyCounts
+    ] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          role: true,
+          isPaid: true,
+          searchCredits: true,
+          avatarUrl: true,
+          googleId: true,
+          createdAt: true,
+          _count: { select: { searchLogs: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.searchLog.count(),
+      prisma.searchLog.count({ where: { createdAt: { gte: todayStart } } }),
+      prisma.user.count({ where: { isPaid: true } }),
+      prisma.user.count(),
+      prisma.searchLog.count({ where: { createdAt: { gte: weekStart } } }),
+      prisma.anonCredit.count(),
+      prisma.searchLog.groupBy({
+        by: ["searchedUsername"],
+        _count: { searchedUsername: true },
+        orderBy: { _count: { searchedUsername: "desc" } },
+        take: 10,
+      }),
+      prisma.searchLog.findMany({
+        take: 30,
+        orderBy: { createdAt: "desc" },
+        include: { user: { select: { username: true, avatarUrl: true } } },
+      }),
+      prisma.searchCache.count(),
+      prisma.user.count({ where: { createdAt: { gte: weekStart } } }),
+      // Daily search counts - all in parallel instead of sequential loop
+      ...dailyRanges.map((range) =>
+        prisma.searchLog.count({
+          where: { createdAt: { gte: range.start, lte: range.end } },
+        })
+      ),
+    ]);
+
+    const dailySearches = dailyRanges.map((range, i) => ({
+      date: range.label,
+      count: dailyCounts[i] as number,
+    }));
+
+    return NextResponse.json({
+      users: users.map((u) => ({
+        ...u,
+        searchCount: u._count.searchLogs,
+        _count: undefined,
+      })),
+      stats: {
+        totalUsers,
+        paidUsers,
+        totalSearches,
+        searchesToday,
+        searchesThisWeek,
+        totalAnonSessions,
+        cacheCount,
+        newUsersThisWeek,
+      },
+      topSearched: topSearched.map((t) => ({
+        username: t.searchedUsername,
+        count: t._count.searchedUsername,
+      })),
+      dailySearches,
+      recentSearches: recentSearches.map((s) => ({
+        id: s.id,
+        searchedUsername: s.searchedUsername,
+        postCount: s.postCount,
+        commentCount: s.commentCount,
+        createdAt: s.createdAt,
+        performedBy: s.user?.username ?? "Anonymous",
+        avatarUrl: s.user?.avatarUrl ?? null,
+      })),
+    });
+  } catch (err) {
+    console.error("[admin/users] Failed to fetch data:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
