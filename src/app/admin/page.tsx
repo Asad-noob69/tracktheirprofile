@@ -146,7 +146,6 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    // Check if already authenticated via cookie
     fetchData();
     fetchCache();
   }, []);
@@ -268,40 +267,40 @@ export default function AdminDashboard() {
   const maxDaily = Math.max(...dailySearches.map((d) => d.count), 1);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+    <div className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
             Admin <span className="text-green-accent">Dashboard</span>
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">Manage users, monitor searches, and control your platform</p>
+          <p className="mt-1 text-xs text-zinc-500 sm:text-sm">Manage users, monitor searches, and control your platform</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => { fetchData(userSearch, userFilter); fetchCache(); }}
-            className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-green-accent/30"
+            className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs text-zinc-300 transition-colors hover:border-green-accent/30 sm:px-4 sm:text-sm"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             Refresh
           </button>
           <button
             onClick={handleAdminLogout}
-            className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-2 text-sm text-red-400 transition-colors hover:bg-red-500/10"
+            className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-400 transition-colors hover:bg-red-500/10 sm:px-4 sm:text-sm"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-            Logout
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-1 rounded-lg border border-card-border bg-card-bg p-1">
+      <div className="mb-6 flex gap-1 overflow-x-auto rounded-lg border border-card-border bg-card-bg p-1">
         {(["overview", "users", "searches", "cache"] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium capitalize transition-all ${
+            className={`flex-1 whitespace-nowrap rounded-md px-3 py-2 text-xs font-medium capitalize transition-all sm:px-4 sm:text-sm ${
               activeTab === tab
                 ? "bg-green-accent text-black shadow-sm"
                 : "text-zinc-400 hover:text-foreground"
@@ -312,33 +311,80 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* ═══════════════ OVERVIEW TAB ═══════════════ */}
+      {/* OVERVIEW TAB */}
       {activeTab === "overview" && stats && (
         <div className="space-y-6">
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <StatCard label="Total Users" value={stats.totalUsers} icon="users" accent />
             <StatCard label="Paid Users" value={stats.paidUsers} icon="star" />
             <StatCard label="Searches Today" value={stats.searchesToday} icon="search" accent />
             <StatCard label="This Week" value={stats.searchesThisWeek} icon="chart" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <StatCard label="Total Searches" value={stats.totalSearches} icon="database" />
             <StatCard label="New Users (7d)" value={stats.newUsersThisWeek} icon="plus" accent />
             <StatCard label="Anon Sessions" value={stats.totalAnonSessions} icon="eye" />
             <StatCard label="Cached Results" value={stats.cacheCount} icon="bolt" />
           </div>
 
-          {/* Charts Row */}
+          {/* Donut Chart + Line Chart Row */}
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Daily Search Volume */}
-            <div className="rounded-xl border border-card-border bg-card-bg p-5">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-400">Search Volume (7 Days)</h3>
-              <div className="flex items-end gap-2" style={{ height: 160 }}>
+            {/* User Distribution Donut Chart */}
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">User Distribution</h3>
+              <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-8">
+                <DonutChart
+                  segments={[
+                    { value: stats.paidUsers, color: "#eab308", label: "Paid" },
+                    { value: Math.max(stats.totalUsers - stats.paidUsers, 0), color: "#3f3f46", label: "Free" },
+                  ]}
+                  total={stats.totalUsers}
+                  centerLabel="Users"
+                />
+                <div className="flex flex-row gap-4 sm:flex-col sm:gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                    <div>
+                      <p className="text-xs text-zinc-400">Paid Users</p>
+                      <p className="text-lg font-bold text-foreground">{stats.paidUsers}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-zinc-600" />
+                    <div>
+                      <p className="text-xs text-zinc-400">Free Users</p>
+                      <p className="text-lg font-bold text-foreground">{Math.max(stats.totalUsers - stats.paidUsers, 0)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-green-500" />
+                    <div>
+                      <p className="text-xs text-zinc-400">New (7d)</p>
+                      <p className="text-lg font-bold text-green-accent">{stats.newUsersThisWeek}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Volume Line Chart */}
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Search Trend (7 Days)</h3>
+              <LineChart data={dailySearches} />
+            </div>
+          </div>
+
+          {/* Bar Chart + Top Searched Row */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Daily Search Volume Bar Chart */}
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Daily Volume</h3>
+              <div className="flex items-end gap-1.5 sm:gap-2" style={{ height: 160 }}>
                 {dailySearches.map((d, i) => (
                   <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                    <span className="text-xs font-medium text-zinc-400">{d.count}</span>
+                    <span className="text-[10px] font-medium text-zinc-400 sm:text-xs">{d.count}</span>
                     <div
                       className="w-full rounded-t-md bg-green-accent/20 transition-all hover:bg-green-accent/40"
                       style={{ height: `${Math.max((d.count / maxDaily) * 120, 4)}px` }}
@@ -348,15 +394,15 @@ export default function AdminDashboard() {
                         style={{ height: `${Math.max((d.count / maxDaily) * 100, 10)}%` }}
                       />
                     </div>
-                    <span className="text-[10px] text-zinc-600">{d.date.split(", ")[0]}</span>
+                    <span className="text-[8px] text-zinc-600 sm:text-[10px]">{d.date.split(", ")[0]}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Top Searched */}
-            <div className="rounded-xl border border-card-border bg-card-bg p-5">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-400">Top Searched Usernames</h3>
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Top Searched Usernames</h3>
               {topSearched.length === 0 ? (
                 <p className="py-8 text-center text-sm text-zinc-600">No searches yet</p>
               ) : (
@@ -366,10 +412,10 @@ export default function AdminDashboard() {
                     return (
                       <div key={i} className="flex items-center gap-3">
                         <span className="w-6 text-right text-xs font-bold text-zinc-500">#{i + 1}</span>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium text-green-accent">u/{t.username}</span>
-                            <span className="text-xs text-zinc-500">{t.count} searches</span>
+                            <span className="truncate font-medium text-green-accent">u/{t.username}</span>
+                            <span className="ml-2 shrink-0 text-xs text-zinc-500">{t.count}</span>
                           </div>
                           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-zinc-800">
                             <div className="h-full rounded-full bg-green-accent/50" style={{ width: `${(t.count / maxCount) * 100}%` }} />
@@ -383,15 +429,41 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Platform Health */}
+          <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Platform Health</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <HealthMeter
+                label="Cache Utilization"
+                value={stats.cacheCount}
+                max={100}
+                color="#22c55e"
+              />
+              <HealthMeter
+                label="Conversion Rate"
+                value={stats.totalUsers > 0 ? Math.round((stats.paidUsers / stats.totalUsers) * 100) : 0}
+                max={100}
+                suffix="%"
+                color="#eab308"
+              />
+              <HealthMeter
+                label="Searches / User"
+                value={stats.totalUsers > 0 ? Math.round(stats.totalSearches / stats.totalUsers) : 0}
+                max={Math.max(stats.totalUsers > 0 ? Math.round(stats.totalSearches / stats.totalUsers) : 0, 50)}
+                color="#3b82f6"
+              />
+            </div>
+          </div>
+
           {/* Recent Activity */}
           <div className="rounded-xl border border-card-border bg-card-bg">
-            <div className="border-b border-card-border px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Recent Activity</h3>
+            <div className="border-b border-card-border px-4 py-3 sm:px-5 sm:py-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Recent Activity</h3>
             </div>
             <div className="divide-y divide-card-border">
               {recentSearches.slice(0, 15).map((s) => (
-                <div key={s.id} className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-background/50">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-accent/10 text-xs font-bold text-green-accent">
+                <div key={s.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-background/50 sm:gap-4 sm:px-5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-accent/10 text-xs font-bold text-green-accent">
                     {s.avatarUrl ? (
                       <img src={s.avatarUrl} alt="" className="h-8 w-8 rounded-full" />
                     ) : (
@@ -399,15 +471,15 @@ export default function AdminDashboard() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">
-                      <span className="text-zinc-400">{s.performedBy}</span> searched for{" "}
+                    <p className="text-xs text-foreground truncate sm:text-sm">
+                      <span className="text-zinc-400">{s.performedBy}</span> searched{" "}
                       <span className="font-medium text-green-accent">u/{s.searchedUsername}</span>
                     </p>
-                    <p className="text-xs text-zinc-600">
+                    <p className="text-[10px] text-zinc-600 sm:text-xs">
                       {s.postCount} posts, {s.commentCount} comments
                     </p>
                   </div>
-                  <span className="whitespace-nowrap text-xs text-zinc-600">
+                  <span className="hidden whitespace-nowrap text-xs text-zinc-600 sm:block">
                     {timeAgo(new Date(s.createdAt).getTime())}
                   </span>
                 </div>
@@ -420,7 +492,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* ═══════════════ USERS TAB ═══════════════ */}
+      {/* USERS TAB */}
       {activeTab === "users" && (
         <div className="space-y-4">
           {/* Search & Filter */}
@@ -431,7 +503,7 @@ export default function AdminDashboard() {
               </svg>
               <input
                 type="text"
-                placeholder="Search users by email or username..."
+                placeholder="Search users..."
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 className="w-full rounded-lg border border-card-border bg-card-bg py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-zinc-600 outline-none transition-colors focus:border-green-accent/50"
@@ -454,8 +526,8 @@ export default function AdminDashboard() {
 
           <p className="text-xs text-zinc-500">{users.length} user{users.length !== 1 ? "s" : ""} found</p>
 
-          {/* Users Table */}
-          <div className="overflow-x-auto rounded-xl border border-card-border">
+          {/* Users - Cards on mobile, Table on desktop */}
+          <div className="hidden overflow-x-auto rounded-xl border border-card-border md:block">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-card-border bg-card-bg">
@@ -507,27 +579,9 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           <span>{user.searchCredits}</span>
                           <div className="flex gap-0.5">
-                            <button
-                              onClick={() => setCredits(user.id, 20)}
-                              className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700"
-                              title="Reset to 20"
-                            >
-                              20
-                            </button>
-                            <button
-                              onClick={() => setCredits(user.id, 50)}
-                              className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700"
-                              title="Set to 50"
-                            >
-                              50
-                            </button>
-                            <button
-                              onClick={() => setCredits(user.id, 100)}
-                              className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700"
-                              title="Set to 100"
-                            >
-                              100
-                            </button>
+                            <button onClick={() => setCredits(user.id, 20)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Reset to 20">20</button>
+                            <button onClick={() => setCredits(user.id, 50)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Set to 50">50</button>
+                            <button onClick={() => setCredits(user.id, 100)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Set to 100">100</button>
                           </div>
                         </div>
                       )}
@@ -556,26 +610,11 @@ export default function AdminDashboard() {
                         </button>
                         {confirmDelete === user.id ? (
                           <div className="flex gap-1">
-                            <button
-                              onClick={() => deleteUser(user.id)}
-                              className="rounded bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400 hover:bg-red-500/30"
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              onClick={() => setConfirmDelete(null)}
-                              className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-400 hover:bg-zinc-700"
-                            >
-                              Cancel
-                            </button>
+                            <button onClick={() => deleteUser(user.id)} className="rounded bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400 hover:bg-red-500/30">Confirm</button>
+                            <button onClick={() => setConfirmDelete(null)} className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-400 hover:bg-zinc-700">Cancel</button>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => setConfirmDelete(user.id)}
-                            className="rounded bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
-                          >
-                            Delete
-                          </button>
+                          <button onClick={() => setConfirmDelete(user.id)} className="rounded bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20">Delete</button>
                         )}
                       </div>
                     </td>
@@ -587,16 +626,97 @@ export default function AdminDashboard() {
               <p className="py-12 text-center text-sm text-zinc-600">No users found</p>
             )}
           </div>
+
+          {/* Mobile User Cards */}
+          <div className="space-y-3 md:hidden">
+            {users.map((user) => (
+              <div key={user.id} className="rounded-xl border border-card-border bg-card-bg p-4">
+                <div className="mb-3 flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-accent/10 text-sm font-bold text-green-accent overflow-hidden">
+                    {user.avatarUrl ? (
+                      <img src={user.avatarUrl} alt="" className="h-10 w-10 rounded-full" />
+                    ) : (
+                      user.username[0]?.toUpperCase()
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-foreground">{user.username}</p>
+                    <p className="truncate text-xs text-zinc-500">{user.email}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                      user.role === "admin" ? "bg-green-accent/10 text-green-accent" : "bg-zinc-800 text-zinc-400"
+                    }`}>{user.role}</span>
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                      user.isPaid ? "bg-yellow-500/10 text-yellow-400" : "bg-zinc-800 text-zinc-400"
+                    }`}>{user.isPaid ? "Paid" : "Free"}</span>
+                  </div>
+                </div>
+                <div className="mb-3 grid grid-cols-3 gap-2 rounded-lg bg-background p-2.5">
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-500">Credits</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {user.isPaid || user.role === "admin" ? <span className="text-green-accent text-xs">Unlimited</span> : user.searchCredits}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-500">Searches</p>
+                    <p className="text-sm font-semibold text-foreground">{user.searchCount}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-500">Joined</p>
+                    <p className="text-xs font-semibold text-foreground">
+                      {new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => togglePaid(user.id, user.isPaid)}
+                    className={`rounded px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                      user.isPaid ? "bg-zinc-800 text-zinc-400" : "bg-yellow-500/10 text-yellow-400"
+                    }`}
+                  >
+                    {user.isPaid ? "Revoke Paid" : "Make Paid"}
+                  </button>
+                  <button
+                    onClick={() => toggleRole(user.id, user.role)}
+                    className="rounded bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-400"
+                  >
+                    {user.role === "admin" ? "Demote" : "Make Admin"}
+                  </button>
+                  {!user.isPaid && user.role !== "admin" && (
+                    <div className="flex gap-1">
+                      {[20, 50, 100].map((c) => (
+                        <button key={c} onClick={() => setCredits(user.id, c)} className="rounded bg-zinc-800 px-2 py-1.5 text-[10px] text-zinc-400">{c} cr</button>
+                      ))}
+                    </div>
+                  )}
+                  {confirmDelete === user.id ? (
+                    <div className="flex gap-1 ml-auto">
+                      <button onClick={() => deleteUser(user.id)} className="rounded bg-red-500/20 px-2.5 py-1.5 text-xs font-medium text-red-400">Confirm</button>
+                      <button onClick={() => setConfirmDelete(null)} className="rounded bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-400">Cancel</button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setConfirmDelete(user.id)} className="ml-auto rounded bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400">Delete</button>
+                  )}
+                </div>
+              </div>
+            ))}
+            {users.length === 0 && (
+              <p className="py-12 text-center text-sm text-zinc-600">No users found</p>
+            )}
+          </div>
         </div>
       )}
 
-      {/* ═══════════════ SEARCHES TAB ═══════════════ */}
+      {/* SEARCHES TAB */}
       {activeTab === "searches" && (
         <div className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Top Searched */}
-            <div className="rounded-xl border border-card-border bg-card-bg p-5">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-400">Most Searched Usernames</h3>
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Most Searched Usernames</h3>
               {topSearched.length === 0 ? (
                 <p className="py-8 text-center text-sm text-zinc-600">No data yet</p>
               ) : (
@@ -605,15 +725,15 @@ export default function AdminDashboard() {
                     const maxCount = topSearched[0]?.count || 1;
                     return (
                       <div key={i} className="flex items-center gap-3">
-                        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                           i < 3 ? "bg-green-accent/10 text-green-accent" : "bg-zinc-800 text-zinc-500"
                         }`}>
                           {i + 1}
                         </span>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-foreground">u/{t.username}</span>
-                            <span className="text-sm font-bold text-green-accent">{t.count}</span>
+                            <span className="truncate text-sm font-medium text-foreground">u/{t.username}</span>
+                            <span className="ml-2 shrink-0 text-sm font-bold text-green-accent">{t.count}</span>
                           </div>
                           <div className="mt-1 h-1 overflow-hidden rounded-full bg-zinc-800">
                             <div className="h-full rounded-full bg-green-accent/50" style={{ width: `${(t.count / maxCount) * 100}%` }} />
@@ -627,19 +747,19 @@ export default function AdminDashboard() {
             </div>
 
             {/* Search Volume Chart */}
-            <div className="rounded-xl border border-card-border bg-card-bg p-5">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-400">Daily Volume (7 Days)</h3>
-              <div className="flex items-end gap-3" style={{ height: 200 }}>
+            <div className="rounded-xl border border-card-border bg-card-bg p-4 sm:p-5">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Daily Volume (7 Days)</h3>
+              <div className="flex items-end gap-1.5 sm:gap-3" style={{ height: 200 }}>
                 {dailySearches.map((d, i) => (
                   <div key={i} className="flex flex-1 flex-col items-center gap-2">
-                    <span className="text-sm font-bold text-foreground">{d.count}</span>
+                    <span className="text-[10px] font-bold text-foreground sm:text-sm">{d.count}</span>
                     <div className="w-full overflow-hidden rounded-lg bg-zinc-800" style={{ height: 140 }}>
                       <div
                         className="w-full rounded-lg bg-gradient-to-t from-green-accent/40 to-green-accent/80 transition-all"
                         style={{ height: `${Math.max((d.count / maxDaily) * 100, 3)}%`, marginTop: "auto" }}
                       />
                     </div>
-                    <span className="text-[10px] text-zinc-500 text-center leading-tight">{d.date}</span>
+                    <span className="text-[8px] text-zinc-500 text-center leading-tight sm:text-[10px]">{d.date}</span>
                   </div>
                 ))}
               </div>
@@ -648,10 +768,11 @@ export default function AdminDashboard() {
 
           {/* Full Search Log */}
           <div className="rounded-xl border border-card-border bg-card-bg">
-            <div className="border-b border-card-border px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Search Log</h3>
+            <div className="border-b border-card-border px-4 py-3 sm:px-5 sm:py-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Search Log</h3>
             </div>
-            <div className="overflow-x-auto">
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto sm:block">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-card-border">
@@ -680,27 +801,47 @@ export default function AdminDashboard() {
                 <p className="py-12 text-center text-sm text-zinc-600">No searches yet</p>
               )}
             </div>
+            {/* Mobile list */}
+            <div className="divide-y divide-card-border sm:hidden">
+              {recentSearches.map((s) => (
+                <div key={s.id} className="px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-accent">u/{s.searchedUsername}</span>
+                    <span className="text-[10px] text-zinc-600">
+                      {new Date(s.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-zinc-400">
+                    by {s.performedBy} &middot; {s.postCount} posts, {s.commentCount} comments
+                  </p>
+                </div>
+              ))}
+              {recentSearches.length === 0 && (
+                <p className="py-12 text-center text-sm text-zinc-600">No searches yet</p>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* ═══════════════ CACHE TAB ═══════════════ */}
+      {/* CACHE TAB */}
       {activeTab === "cache" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-zinc-400">{cacheEntries.length} cached result{cacheEntries.length !== 1 ? "s" : ""}</p>
+            <p className="text-xs text-zinc-400 sm:text-sm">{cacheEntries.length} cached result{cacheEntries.length !== 1 ? "s" : ""}</p>
             {cacheEntries.length > 0 && (
               <button
                 onClick={() => clearCache()}
-                className="flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 sm:px-4 sm:py-2 sm:text-sm"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                Clear All Cache
+                Clear All
               </button>
             )}
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-card-border">
+          {/* Desktop table */}
+          <div className="hidden overflow-x-auto rounded-xl border border-card-border sm:block">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-card-border bg-card-bg">
@@ -732,12 +873,7 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <button
-                          onClick={() => clearCache(entry.id)}
-                          className="rounded bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
-                        >
-                          Remove
-                        </button>
+                        <button onClick={() => clearCache(entry.id)} className="rounded bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20">Remove</button>
                       </td>
                     </tr>
                   );
@@ -748,8 +884,164 @@ export default function AdminDashboard() {
               <p className="py-12 text-center text-sm text-zinc-600">No cached results</p>
             )}
           </div>
+
+          {/* Mobile cache cards */}
+          <div className="space-y-3 sm:hidden">
+            {cacheEntries.map((entry) => {
+              const expiresAt = new Date(new Date(entry.updatedAt).getTime() + 30 * 60 * 1000);
+              const isExpired = expiresAt < new Date();
+              return (
+                <div key={entry.id} className="rounded-xl border border-card-border bg-card-bg p-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-accent">u/{entry.searchedUsername}</span>
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                      isExpired ? "bg-red-500/10 text-red-400" : "bg-green-accent/10 text-green-accent"
+                    }`}>
+                      {isExpired ? "Expired" : `${Math.ceil((expiresAt.getTime() - Date.now()) / 60000)}m left`}
+                    </span>
+                  </div>
+                  <div className="mb-3 flex gap-4 text-xs text-zinc-400">
+                    <span>{entry.postCount} posts</span>
+                    <span>{entry.commentCount} comments</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-zinc-600">
+                      Cached {new Date(entry.updatedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                    <button onClick={() => clearCache(entry.id)} className="rounded bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400">Remove</button>
+                  </div>
+                </div>
+              );
+            })}
+            {cacheEntries.length === 0 && (
+              <p className="py-12 text-center text-sm text-zinc-600">No cached results</p>
+            )}
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ═══════════════ CHART COMPONENTS ═══════════════ */
+
+function DonutChart({ segments, total, centerLabel }: {
+  segments: { value: number; color: string; label: string }[];
+  total: number;
+  centerLabel: string;
+}) {
+  const size = 140;
+  const strokeWidth = 20;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+
+  let offset = 0;
+
+  return (
+    <div className="relative inline-flex items-center justify-center">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        {total === 0 ? (
+          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#27272a" strokeWidth={strokeWidth} />
+        ) : (
+          segments.map((seg, i) => {
+            const pct = seg.value / total;
+            const dash = pct * circumference;
+            const gap = circumference - dash;
+            const currentOffset = offset;
+            offset += dash;
+            return (
+              <circle
+                key={i}
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={seg.color}
+                strokeWidth={strokeWidth}
+                strokeDasharray={`${dash} ${gap}`}
+                strokeDashoffset={-currentOffset}
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            );
+          })
+        )}
+      </svg>
+      <div className="absolute flex flex-col items-center">
+        <span className="text-2xl font-bold text-foreground">{total}</span>
+        <span className="text-[10px] text-zinc-500">{centerLabel}</span>
+      </div>
+    </div>
+  );
+}
+
+function LineChart({ data }: { data: DailySearch[] }) {
+  if (data.length === 0) return <p className="py-8 text-center text-sm text-zinc-600">No data yet</p>;
+
+  const maxVal = Math.max(...data.map((d) => d.count), 1);
+  const width = 100;
+  const height = 50;
+  const padding = 2;
+  const chartW = width - padding * 2;
+  const chartH = height - padding * 2;
+
+  const points = data.map((d, i) => {
+    const x = padding + (i / Math.max(data.length - 1, 1)) * chartW;
+    const y = padding + chartH - (d.count / maxVal) * chartH;
+    return { x, y, ...d };
+  });
+
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
+  const areaPath = `${linePath} L${points[points.length - 1].x},${height - padding} L${points[0].x},${height - padding} Z`;
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ height: 160 }} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={areaPath} fill="url(#lineGrad)" />
+        <path d={linePath} fill="none" stroke="#22c55e" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="1" fill="#22c55e" />
+        ))}
+      </svg>
+      <div className="mt-2 flex justify-between">
+        {data.map((d, i) => (
+          <div key={i} className="flex flex-col items-center">
+            <span className="text-[10px] font-medium text-zinc-400 sm:text-xs">{d.count}</span>
+            <span className="text-[8px] text-zinc-600 sm:text-[10px]">{d.date.split(", ")[0]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HealthMeter({ label, value, max, color, suffix = "" }: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+  suffix?: string;
+}) {
+  const pct = Math.min((value / max) * 100, 100);
+
+  return (
+    <div className="rounded-lg bg-background p-3 sm:p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xs text-zinc-400">{label}</span>
+        <span className="text-sm font-bold text-foreground">{value}{suffix}</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
+      </div>
     </div>
   );
 }
@@ -767,16 +1059,16 @@ function StatCard({ label, value, icon, accent }: { label: string; value: number
   };
 
   return (
-    <div className="rounded-xl border border-card-border bg-card-bg p-4 transition-all hover:border-green-accent/10">
+    <div className="rounded-xl border border-card-border bg-card-bg p-3 transition-all hover:border-green-accent/10 sm:p-4">
       <div className="mb-2 flex items-center justify-between">
-        <svg className="h-5 w-5 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="h-4 w-4 text-zinc-600 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           {icons[icon]}
         </svg>
       </div>
-      <p className={`text-2xl font-bold ${accent ? "text-green-accent" : "text-foreground"}`}>
+      <p className={`text-xl font-bold sm:text-2xl ${accent ? "text-green-accent" : "text-foreground"}`}>
         {value.toLocaleString()}
       </p>
-      <p className="mt-0.5 text-xs text-zinc-500">{label}</p>
+      <p className="mt-0.5 text-[10px] text-zinc-500 sm:text-xs">{label}</p>
     </div>
   );
 }
