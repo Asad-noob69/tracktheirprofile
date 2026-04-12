@@ -53,7 +53,7 @@ export default function SearchBar({
             isLarge ? "px-2 py-2 text-lg" : "px-2 py-1.5 text-sm"
           }`}
           maxLength={50}
-          autoComplete="off"
+          autoComplete="off" // Disable browser autofill
           spellCheck={false}
         />
         <button
