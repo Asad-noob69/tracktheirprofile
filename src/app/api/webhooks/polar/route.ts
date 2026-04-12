@@ -1,5 +1,5 @@
 import { Webhooks } from "@polar-sh/nextjs";
-import prisma from "@/lib/db";
+import {prisma} from "@/lib/db";
 
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET ?? "",
