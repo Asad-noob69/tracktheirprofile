@@ -18,6 +18,8 @@ declare global {
   }
 }
 
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 function SignUpContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
@@ -34,6 +36,8 @@ function SignUpContent() {
   };
 
   useEffect(() => {
+    if (!TURNSTILE_ENABLED) return;
+
     function renderWidget() {
       if (turnstileRef.current && window.turnstile && !widgetIdRef.current) {
         widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
@@ -61,9 +65,13 @@ function SignUpContent() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!turnstileToken) return;
+    if (TURNSTILE_ENABLED && !turnstileToken) return;
     setSubmitting(true);
-    window.location.href = `/api/auth/google?cf_token=${encodeURIComponent(turnstileToken)}`;
+    if (TURNSTILE_ENABLED) {
+      window.location.href = `/api/auth/google?cf_token=${encodeURIComponent(turnstileToken)}`;
+    } else {
+      window.location.href = `/api/auth/google`;
+    }
   }
 
   return (
@@ -92,7 +100,7 @@ function SignUpContent() {
 
             <button
               type="submit"
-              disabled={!turnstileToken || submitting}
+              disabled={(TURNSTILE_ENABLED && !turnstileToken) || submitting}
               className="flex w-full items-center justify-center gap-3 rounded-lg border border-card-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-green-accent/30 hover:bg-card-bg disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">

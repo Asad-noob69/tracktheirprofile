@@ -38,27 +38,79 @@ const FREE_PREVIEW_COUNT = 10;
 function PaywallOverlay() {
   return (
     <div className="relative mt-4">
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-sm">
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-card-border bg-card-bg px-8 py-6 shadow-2xl">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-accent/10">
-            <svg className="h-6 w-6 text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      {/* Blurred ghost cards — 5 cards mimicking real posts */}
+      <div className="space-y-4 select-none" aria-hidden="true">
+        {[
+          { w1: "w-28", w2: "w-3/4", w3: "w-full", w4: "w-5/6" },
+          { w1: "w-24", w2: "w-2/3", w3: "w-11/12", w4: "w-4/5" },
+          { w1: "w-32", w2: "w-4/5", w3: "w-full", w4: "w-3/4" },
+          { w1: "w-20", w2: "w-3/5", w3: "w-10/12", w4: "w-full" },
+          { w1: "w-28", w2: "w-2/4", w3: "w-full", w4: "w-5/6" },
+        ].map((widths, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-card-border bg-card-bg p-5 blur-sm"
+          >
+            {/* Header row */}
+            <div className="mb-3 flex items-center gap-2">
+              <div className={`h-5 ${widths.w1} rounded-md bg-green-accent/10`} />
+              <div className="h-4 w-1 rounded bg-zinc-800" />
+              <div className="h-4 w-20 rounded bg-zinc-800" />
+              <div className="h-4 w-1 rounded bg-zinc-800" />
+              <div className="h-4 w-14 rounded bg-zinc-800" />
+            </div>
+            {/* Title */}
+            <div className={`mb-2 h-5 ${widths.w2} rounded bg-zinc-700`} />
+            {/* Body */}
+            <div className="mb-1 space-y-1.5">
+              <div className={`h-3.5 ${widths.w3} rounded bg-zinc-800`} />
+              <div className={`h-3.5 ${widths.w4} rounded bg-zinc-800`} />
+            </div>
+            {/* Footer */}
+            <div className="mt-4 flex items-center gap-4">
+              <div className="h-3.5 w-12 rounded bg-zinc-800" />
+              <div className="h-3.5 w-16 rounded bg-zinc-800" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Lock overlay — centered over the blurred cards */}
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-card-border bg-background/90 px-8 py-7 shadow-2xl backdrop-blur-md">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-accent/10 ring-8 ring-green-accent/5">
+            <svg
+              className="h-7 w-7 text-green-accent"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
             </svg>
           </div>
-          <p className="text-lg font-bold text-foreground">Unlock Full Results</p>
-          <p className="text-sm text-zinc-400 text-center max-w-xs">
-            Pay <span className="text-green-accent font-semibold">$5</span> to unlock all posts and comments for every search.
-          </p>
-          <button className="mt-2 rounded-lg bg-green-accent px-6 py-2.5 text-sm font-bold text-black transition-all hover:bg-green-400">
-            Pay $5 to Unlock
-          </button>
+          <div className="text-center">
+            <p className="text-lg font-bold text-foreground">
+              Unlock Full Results
+            </p>
+            <p className="mt-1 max-w-xs text-sm text-zinc-400">
+              You&apos;ve seen the first 10. Pay{" "}
+              <span className="font-semibold text-green-accent">$5</span> once
+              to unlock every post &amp; comment — forever.
+            </p>
+          </div>
+          <a
+            href="/api/checkout"
+            className="mt-1 rounded-lg bg-green-accent px-7 py-2.5 text-sm font-bold text-black transition-all hover:bg-green-400 hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+          >
+            Pay $5 — Lifetime Access
+          </a>
+          <p className="text-xs text-zinc-600">One-time payment. No subscription.</p>
         </div>
-      </div>
-      {/* Blurred placeholder cards */}
-      <div className="space-y-4 pointer-events-none select-none blur-sm">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-xl border border-card-border bg-card-bg p-5 h-32" />
-        ))}
       </div>
     </div>
   );
@@ -245,9 +297,9 @@ function SearchContent() {
             </Link>
           )}
           {error.includes("Upgrade") && (
-            <button className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
-              Pay $5 to Unlock
-            </button>
+            <a href="/api/checkout" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
+              Pay $5 — Lifetime Access
+            </a>
           )}
         </div>
       )}

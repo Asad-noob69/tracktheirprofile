@@ -116,44 +116,35 @@ export default function Home() {
             Simple pricing
           </h2>
           <p className="mb-12 text-center text-zinc-400">
-            Start free. Upgrade when you need more.
+            Try free. Unlock everything for{" "}
+            <span className="font-semibold text-green-accent">$5</span> — one
+            time, forever.
           </p>
 
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
             <PricingCard
               name="Free"
               price="$0"
-              period="/month"
+              period=""
               features={[
-                "5 searches per day",
-                "Basic post data",
-                "Community support",
+                "5 searches (anonymous)",
+                "20 searches after sign-up",
+                "First 10 posts & comments",
+                "Export to CSV",
               ]}
             />
             <PricingCard
-              name="Pro"
-              price="$19"
-              period="/month"
+              name="Lifetime"
+              price="$5"
+              period=" one-time"
               features={[
                 "Unlimited searches",
-                "Full post content",
-                "Comment history",
+                "All posts & comments revealed",
                 "Export to CSV",
-                "Priority support",
+                "Lifetime access — pay once",
               ]}
               highlighted
-            />
-            <PricingCard
-              name="Enterprise"
-              price="$99"
-              period="/month"
-              features={[
-                "Everything in Pro",
-                "API access",
-                "Bulk lookups",
-                "Dedicated support",
-                "Custom integrations",
-              ]}
+              checkoutHref="/api/checkout"
             />
           </div>
         </div>
@@ -196,12 +187,14 @@ function PricingCard({
   period,
   features,
   highlighted = false,
+  checkoutHref,
 }: {
   name: string;
   price: string;
   period: string;
   features: string[];
   highlighted?: boolean;
+  checkoutHref?: string;
 }) {
   return (
     <div
@@ -213,7 +206,7 @@ function PricingCard({
     >
       {highlighted && (
         <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-green-accent">
-          Most Popular
+          Best Value
         </div>
       )}
       <h3 className="mb-1 text-xl font-bold text-foreground">{name}</h3>
@@ -241,15 +234,29 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <button
-        className={`w-full rounded-lg py-2.5 text-sm font-semibold transition-all ${
-          highlighted
-            ? "bg-green-accent text-black hover:bg-green-400"
-            : "border border-card-border bg-background text-foreground hover:border-green-accent/30"
-        }`}
-      >
-        Get Started
-      </button>
+      {checkoutHref ? (
+        <a
+          href={checkoutHref}
+          className={`block w-full rounded-lg py-2.5 text-center text-sm font-semibold transition-all ${
+            highlighted
+              ? "bg-green-accent text-black hover:bg-green-400"
+              : "border border-card-border bg-background text-foreground hover:border-green-accent/30"
+          }`}
+        >
+          Get Lifetime Access
+        </a>
+      ) : (
+        <a
+          href="/signup"
+          className={`block w-full rounded-lg py-2.5 text-center text-sm font-semibold transition-all ${
+            highlighted
+              ? "bg-green-accent text-black hover:bg-green-400"
+              : "border border-card-border bg-background text-foreground hover:border-green-accent/30"
+          }`}
+        >
+          Get Started Free
+        </a>
+      )}
     </div>
   );
 }
