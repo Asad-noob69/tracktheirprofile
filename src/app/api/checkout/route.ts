@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const polar = new Polar({ accessToken });
+  const polar = new Polar({
+    accessToken,
+    server: (process.env.POLAR_SERVER as "sandbox") || undefined,
+  });
 
   try {
     const checkout = await polar.checkouts.create({
