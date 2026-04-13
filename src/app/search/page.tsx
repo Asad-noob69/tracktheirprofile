@@ -385,13 +385,13 @@ function SearchContent() {
               ) : (
                 <>
                   <div className="space-y-4">
-                    {results.posts.slice(0, canSeeAll ? results.posts.length : FREE_PREVIEW_COUNT).map((post, i) => (
+                    {results.posts.map((post, i) => (
                       <div key={post.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
                         <RedditPostCard post={post} />
                       </div>
                     ))}
                   </div>
-                  {!canSeeAll && results.posts.length > FREE_PREVIEW_COUNT && <PaywallOverlay />}
+                  {!canSeeAll && results.postCount > FREE_PREVIEW_COUNT && <PaywallOverlay />}
                 </>
               )}
             </>
@@ -409,13 +409,13 @@ function SearchContent() {
               ) : (
                 <>
                   <div className="space-y-4">
-                    {results.comments.slice(0, canSeeAll ? results.comments.length : FREE_PREVIEW_COUNT).map((comment, i) => (
+                    {results.comments.map((comment, i) => (
                       <div key={comment.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
                         <RedditCommentCard comment={comment} />
                       </div>
                     ))}
                   </div>
-                  {!canSeeAll && results.comments.length > FREE_PREVIEW_COUNT && <PaywallOverlay />}
+                  {!canSeeAll && results.commentCount > FREE_PREVIEW_COUNT && <PaywallOverlay />}
                 </>
               )}
             </>
