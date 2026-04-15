@@ -51,7 +51,7 @@ export default function Header() {
       ? "0 8px 30px rgba(0,0,0,0.35)"
       : "0 0 0 rgba(0,0,0,0)",
     transition:
-      "width 360ms cubic-bezier(0.22,1,0.36,1), max-width 360ms cubic-bezier(0.22,1,0.36,1), margin-top 320ms cubic-bezier(0.22,1,0.36,1), border-radius 320ms cubic-bezier(0.22,1,0.36,1), box-shadow 320ms ease",
+      "width 620ms cubic-bezier(0.22,1,0.36,1), max-width 620ms cubic-bezier(0.22,1,0.36,1), margin-top 560ms cubic-bezier(0.22,1,0.36,1), border-radius 560ms cubic-bezier(0.22,1,0.36,1), box-shadow 560ms ease",
     willChange: "width, max-width, margin-top, border-radius, box-shadow",
   } as const;
 
@@ -59,7 +59,7 @@ export default function Header() {
     height: isCompact ? "3.5rem" : "4rem",
     maxWidth: isCompact ? "100%" : "72rem",
     transition:
-      "height 320ms cubic-bezier(0.22,1,0.36,1), max-width 360ms cubic-bezier(0.22,1,0.36,1)",
+      "height 560ms cubic-bezier(0.22,1,0.36,1), max-width 620ms cubic-bezier(0.22,1,0.36,1)",
     willChange: "height, max-width",
   } as const;
 
@@ -89,7 +89,7 @@ export default function Header() {
           </Link>
           <nav className="hidden items-center gap-2 md:flex">
             <div
-              className={`flex items-center gap-4 overflow-hidden transition-all duration-300 ${
+              className={`flex items-center gap-4 overflow-hidden transition-[max-width,opacity] duration-500 ease-out ${
                 isCompact ? "max-w-0 opacity-0" : "max-w-sm opacity-100"
               }`}
             >
