@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   description:
     "Search any Reddit username and instantly see all their posts, comments, and activity. The most powerful Reddit profile tracker.",
   metadataBase: new URL(process.env.APP_URL || "https://tracktheirprofile.com"),
+  icons: {
+    icon: [{ url: "/avatar-removebg.png", type: "image/png" }],
+    shortcut: ["/avatar-removebg.png"],
+    apple: ["/avatar-removebg.png"],
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
