@@ -47,7 +47,7 @@ export default function HistoryPage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Search <span className="text-green-accent">History</span>
         </h1>
         <p className="mt-1 text-sm text-zinc-500">Your recent Reddit profile searches</p>
@@ -72,32 +72,47 @@ export default function HistoryPage() {
             <Link
               key={s.id}
               href={`/search?username=${encodeURIComponent(s.searchedUsername)}`}
-              className="group flex items-center gap-4 rounded-xl border border-card-border bg-card-bg p-4 transition-all hover:border-green-accent/30 hover:bg-[#141414]"
+              className="group block rounded-xl border border-card-border bg-card-bg p-4 transition-all hover:border-green-accent/30 hover:bg-[#141414]"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-accent/10">
-                <svg className="h-5 w-5 text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-accent/10">
+                  <svg className="h-5 w-5 text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-base font-medium text-foreground transition-colors group-hover:text-green-accent">
+                    u/{s.searchedUsername}
+                  </p>
+                  <p className="text-xs text-zinc-500">
+                    {s.postCount} posts, {s.commentCount} comments
+                  </p>
+                </div>
+                <div className="hidden text-right sm:block">
+                  <p className="text-xs text-zinc-500">
+                    {new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </p>
+                  <p className="text-[10px] text-zinc-600">
+                    {new Date(s.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <svg className="hidden h-4 w-4 text-zinc-600 transition-colors group-hover:text-green-accent sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-base font-medium text-foreground group-hover:text-green-accent transition-colors">
-                  u/{s.searchedUsername}
-                </p>
-                <p className="text-xs text-zinc-500">
-                  {s.postCount} posts, {s.commentCount} comments
-                </p>
+              <div className="mt-3 flex items-center justify-between border-t border-card-border pt-2 sm:hidden">
+                <div>
+                  <p className="text-xs text-zinc-500">
+                    {new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </p>
+                  <p className="text-[10px] text-zinc-600">
+                    {new Date(s.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <svg className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
-              <div className="text-right">
-                <p className="text-xs text-zinc-500">
-                  {new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                </p>
-                <p className="text-[10px] text-zinc-600">
-                  {new Date(s.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
-                </p>
-              </div>
-              <svg className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
             </Link>
           ))}
         </div>

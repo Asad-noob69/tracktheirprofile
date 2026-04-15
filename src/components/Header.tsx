@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 interface AuthUser {
   userId: string;
@@ -15,7 +14,7 @@ interface AuthUser {
 export default function Header() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -28,6 +27,7 @@ export default function Header() {
     await fetch("/api/auth/signout", { method: "POST" });
     setUser(null);
     setMenuOpen(false);
+    setMobileNavOpen(false);
     window.location.href = "/";
   };
 
@@ -50,25 +50,28 @@ export default function Header() {
               />
             </svg>
           </div>
-          <span className="text-lg font-bold text-foreground">
+          <span className="text-base font-bold text-foreground sm:text-lg">
             Track<span className="text-green-accent">Their</span>Profile
           </span>
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="hidden items-center gap-4 md:flex">
           <Link
             href="/"
+            onClick={() => setMenuOpen(false)}
             className="text-sm text-zinc-400 transition-colors hover:text-green-accent"
           >
             Home
           </Link>
           <Link
             href="/#features"
+            onClick={() => setMenuOpen(false)}
             className="text-sm text-zinc-400 transition-colors hover:text-green-accent"
           >
             Features
           </Link>
           <Link
             href="/#pricing"
+            onClick={() => setMenuOpen(false)}
             className="text-sm text-zinc-400 transition-colors hover:text-green-accent"
           >
             Pricing
@@ -145,7 +148,92 @@ export default function Header() {
             </div>
           )}
         </nav>
+
+        <button
+          type="button"
+          onClick={() => setMobileNavOpen((prev) => !prev)}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-card-border bg-card-bg text-zinc-300 transition-colors hover:border-green-accent/30 hover:text-green-accent md:hidden"
+          aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileNavOpen}
+        >
+          {mobileNavOpen ? (
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {mobileNavOpen && (
+        <div className="border-t border-card-border md:hidden">
+          <nav className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:px-6">
+            <Link
+              href="/"
+              onClick={() => setMobileNavOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-green-accent/5 hover:text-green-accent"
+            >
+              Home
+            </Link>
+            <Link
+              href="/#features"
+              onClick={() => setMobileNavOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-green-accent/5 hover:text-green-accent"
+            >
+              Features
+            </Link>
+            <Link
+              href="/#pricing"
+              onClick={() => setMobileNavOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-green-accent/5 hover:text-green-accent"
+            >
+              Pricing
+            </Link>
+
+            {user ? (
+              <>
+                <div className="mt-2 rounded-xl border border-card-border bg-card-bg px-3 py-2">
+                  <p className="text-sm font-medium text-foreground">{user.username}</p>
+                  <p className="truncate text-xs text-zinc-500">{user.email}</p>
+                </div>
+                <Link
+                  href="/history"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-green-accent/5 hover:text-green-accent"
+                >
+                  Search History
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-left text-sm text-red-400 transition-colors hover:bg-red-500/10"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <Link
+                  href="/signin"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="rounded-lg border border-card-border px-3 py-2 text-center text-sm text-zinc-300 transition-colors hover:border-green-accent/30 hover:text-foreground"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="rounded-lg bg-green-accent px-3 py-2 text-center text-sm font-semibold text-black transition-colors hover:bg-green-400"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

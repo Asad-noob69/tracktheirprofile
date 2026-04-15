@@ -103,15 +103,15 @@ export default function AdminUserDetail() {
       </Link>
 
       {/* User Header */}
-      <div className="mb-8 flex items-start justify-between gap-4 rounded-xl border border-card-border bg-card-bg p-6">
-        <div className="flex items-center gap-4">
+      <div className="mb-8 flex flex-col gap-4 rounded-xl border border-card-border bg-card-bg p-4 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+        <div className="flex items-center gap-3 sm:gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-accent text-xl font-bold text-black">
             {user.username[0].toUpperCase()}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{user.username}</h1>
-            <p className="text-sm text-zinc-400">{user.email}</p>
-            <div className="mt-2 flex items-center gap-2">
+            <h1 className="text-xl font-bold text-foreground sm:text-2xl">{user.username}</h1>
+            <p className="break-all text-sm text-zinc-400">{user.email}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${user.role === "admin" ? "bg-green-accent/10 text-green-accent" : "bg-zinc-800 text-zinc-400"}`}>
                 {user.role}
               </span>
@@ -121,7 +121,7 @@ export default function AdminUserDetail() {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
           <button
             onClick={togglePaid}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${user.isPaid ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700" : "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20"}`}
@@ -143,17 +143,17 @@ export default function AdminUserDetail() {
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Total Searches</p>
-          <p className="text-2xl font-bold text-green-accent">{user.searchLogs.length}</p>
+          <p className="text-xl font-bold text-green-accent sm:text-2xl">{user.searchLogs.length}</p>
         </div>
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Credits Left</p>
-          <p className="text-2xl font-bold text-foreground">
+          <p className="text-xl font-bold text-foreground sm:text-2xl">
             {user.isPaid || user.role === "admin" ? "∞" : user.searchCredits}
           </p>
         </div>
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Unique Usernames</p>
-          <p className="text-2xl font-bold text-foreground">{uniqueSearched.length}</p>
+          <p className="text-xl font-bold text-foreground sm:text-2xl">{uniqueSearched.length}</p>
         </div>
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Joined</p>
@@ -181,7 +181,7 @@ export default function AdminUserDetail() {
       <div>
         <h2 className="mb-4 text-lg font-bold text-foreground">Search History</h2>
         <div className="overflow-hidden rounded-xl border border-card-border">
-          <table className="w-full">
+          <table className="hidden w-full sm:table">
             <thead>
               <tr className="border-b border-card-border bg-card-bg">
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Username</th>
@@ -206,6 +206,24 @@ export default function AdminUserDetail() {
               )}
             </tbody>
           </table>
+          <div className="divide-y divide-card-border sm:hidden">
+            {user.searchLogs.map((log) => (
+              <div key={log.id} className="px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="truncate text-sm font-medium text-green-accent">u/{log.searchedUsername}</span>
+                  <span className="shrink-0 text-[10px] text-zinc-600">
+                    {new Date(log.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-zinc-400">
+                  {log.postCount} posts, {log.commentCount} comments
+                </p>
+              </div>
+            ))}
+            {user.searchLogs.length === 0 && (
+              <p className="px-4 py-8 text-center text-zinc-500">No searches yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

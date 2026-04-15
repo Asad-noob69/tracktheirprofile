@@ -75,10 +75,10 @@ function SignInContent() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-16">
+    <div className="flex flex-1 items-center justify-center px-4 py-12 sm:py-16">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
+          <h1 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
             Welcome to TrackTheirProfile
           </h1>
           <p className="text-zinc-400">Sign in with your Google account to continue</p>
@@ -92,8 +92,8 @@ function SignInContent() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="mb-4 flex justify-center">
-              <div ref={turnstileRef} />
+            <div className="mb-4 w-full overflow-x-auto">
+              <div ref={turnstileRef} className="mx-auto w-fit" />
             </div>
 
             <button

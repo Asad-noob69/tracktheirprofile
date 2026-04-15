@@ -30,9 +30,9 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
       rel="noopener noreferrer"
       className="group block animate-fade-in"
     >
-      <article className="rounded-xl border border-card-border bg-card-bg p-5 transition-all duration-200 hover:border-green-accent/30 hover:bg-[#141414] hover:shadow-[0_0_30px_rgba(34,197,94,0.05)]">
+      <article className="rounded-xl border border-card-border bg-card-bg p-4 transition-all duration-200 hover:border-green-accent/30 hover:bg-[#141414] hover:shadow-[0_0_30px_rgba(34,197,94,0.05)] sm:p-5">
         {/* Header: subreddit + time */}
-        <div className="mb-3 flex items-center gap-2 text-sm">
+        <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">
           <span className="rounded-md bg-green-accent/10 px-2 py-0.5 font-medium text-green-accent">
             {post.subreddit_name_prefixed}
           </span>
@@ -43,7 +43,7 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
           {post.link_flair_text && (
             <>
               <span className="text-zinc-600">•</span>
-              <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-zinc-400">
+              <span className="max-w-full rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-zinc-400">
                 {post.link_flair_text}
               </span>
             </>
@@ -51,7 +51,7 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
         </div>
 
         {/* Title */}
-        <h3 className="mb-2 text-lg font-semibold text-foreground transition-colors group-hover:text-green-accent">
+        <h3 className="mb-2 text-base font-semibold text-foreground transition-colors group-hover:text-green-accent sm:text-lg">
           {post.title}
         </h3>
 
@@ -64,7 +64,7 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
 
         {/* External link indicator */}
         {!post.is_self && post.url && !post.url.includes("reddit.com") && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-card-border bg-background px-3 py-2 text-sm">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-card-border bg-background px-3 py-2 text-xs sm:text-sm">
             <svg
               className="h-4 w-4 flex-shrink-0 text-zinc-500"
               fill="none"
@@ -85,7 +85,7 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
         )}
 
         {/* Footer: score + comments */}
-        <div className="flex items-center gap-4 text-sm text-zinc-500">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500 sm:text-sm">
           <div className="flex items-center gap-1.5">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -105,8 +105,8 @@ export default function RedditPostCard({ post }: { post: RedditPost }) {
             </svg>
             <span>{post.num_comments} comments</span>
           </div>
-          <div className="ml-auto flex items-center gap-1 text-zinc-600 transition-colors group-hover:text-green-accent">
-            <span className="text-xs">View on Reddit</span>
+          <div className="ml-0 flex items-center gap-1 text-zinc-600 transition-colors group-hover:text-green-accent sm:ml-auto">
+            <span className="hidden text-xs sm:inline">View on Reddit</span>
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"

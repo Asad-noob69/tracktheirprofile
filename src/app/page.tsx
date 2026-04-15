@@ -1,24 +1,26 @@
 import SearchBar from "@/components/SearchBar";
+import FunnelSection from "@/components/FunnelSection";
+import ScrollShowcase from "@/components/ScrollShowcase";
 
 export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="flex flex-1 flex-col items-center justify-center px-4 py-20">
+      <section className="flex flex-1 flex-col items-center justify-center px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-accent/20 bg-green-accent/5 px-4 py-1.5 text-sm text-green-accent">
+          <div className="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-green-accent/20 bg-green-accent/5 px-4 py-1.5 text-xs text-green-accent sm:text-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-green-accent"></span>
             Reddit Profile Intelligence
           </div>
 
-          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
+          <h1 className="mb-6 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
             Uncover any{" "}
             <span className="text-green-accent">Reddit</span> profile
             <br />
             in seconds
           </h1>
 
-          <p className="mx-auto mb-10 max-w-xl text-lg text-zinc-400">
+          <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
             Search any username and instantly see all their posts, activity, and
             digital footprint across Reddit. Powered by deep search technology.
           </p>
@@ -32,9 +34,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="border-t border-card-border px-4 py-20">
+      <section id="features" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
-          <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+          <h2 className="mb-10 text-center text-2xl font-bold text-foreground sm:mb-12 sm:text-3xl">
             Why <span className="text-green-accent">TrackTheirProfile</span>?
           </h2>
 
@@ -109,10 +111,12 @@ export default function Home() {
         </div>
       </section>
 
+      <FunnelSection />
+
       {/* Pricing Section */}
-      <section id="pricing" className="border-t border-card-border px-4 py-20">
+      <section id="pricing" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-4 text-center text-3xl font-bold text-foreground">
+          <h2 className="mb-4 text-center text-2xl font-bold text-foreground sm:text-3xl">
             Simple pricing
           </h2>
           <p className="mb-12 text-center text-zinc-400">
@@ -149,6 +153,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ScrollShowcase />
     </>
   );
 }

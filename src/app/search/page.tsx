@@ -266,14 +266,14 @@ function SearchContent() {
           <p className="text-sm font-semibold text-green-accent tracking-wide uppercase mb-2">
             Deep Search Active
           </p>
-          <p className="text-base text-foreground font-medium mb-1">
+          <p className="mb-1 text-center text-base font-medium text-foreground">
             Searching everywhere for{" "}
             <span className="text-green-accent">u/{username}</span>
           </p>
-          <p className="mt-2 text-xs text-zinc-500 transition-all duration-700 min-h-[1.25rem]">
+          <p className="mt-2 min-h-[1.25rem] text-center text-xs text-zinc-500 transition-all duration-700">
             {SEARCH_STAGES[stageIdx]}
           </p>
-          <p className="mt-3 text-xs text-zinc-600">
+          <p className="mt-3 text-center text-xs text-zinc-600">
             Checking 6+ sources — this usually takes 10–30 seconds.
           </p>
         </div>
@@ -290,7 +290,7 @@ function SearchContent() {
           <p className="mb-2 text-lg font-semibold text-foreground">
             {error.includes("credit") ? "No Credits Left" : "Search Failed"}
           </p>
-          <p className="text-zinc-400">{error}</p>
+          <p className="text-center text-zinc-400">{error}</p>
           {error.includes("Sign up") && (
             <Link href="/signup" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
               Sign Up Free
@@ -307,10 +307,10 @@ function SearchContent() {
       {/* Results */}
       {results && !loading && (
         <>
-          <div className="mb-6 flex items-start justify-between">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-foreground">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-xl font-bold text-foreground sm:text-2xl">
                   Results for{" "}
                   <span className="text-green-accent">u/{results.username}</span>
                 </h1>
@@ -330,7 +330,7 @@ function SearchContent() {
             </div>
             <button
               onClick={() => exportToCSV(results)}
-              className="flex items-center gap-1.5 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-green-accent/30 hover:text-green-accent"
+              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-green-accent/30 hover:text-green-accent sm:w-auto"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -343,14 +343,14 @@ function SearchContent() {
           <div className="mb-6 flex gap-1 rounded-lg border border-card-border bg-card-bg p-1">
             <button
               onClick={() => setActiveTab("posts")}
-              className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium transition-all ${
+              className={`flex-1 rounded-md px-2 py-2.5 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
                 activeTab === "posts"
                   ? "bg-green-accent text-black shadow-sm"
                   : "text-zinc-400 hover:text-foreground"
               }`}
             >
-              <span className="flex items-center justify-center gap-2">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+                <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
                 Posts ({results.postCount})
@@ -358,14 +358,14 @@ function SearchContent() {
             </button>
             <button
               onClick={() => setActiveTab("comments")}
-              className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium transition-all ${
+              className={`flex-1 rounded-md px-2 py-2.5 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
                 activeTab === "comments"
                   ? "bg-green-accent text-black shadow-sm"
                   : "text-zinc-400 hover:text-foreground"
               }`}
             >
-              <span className="flex items-center justify-center gap-2">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+                <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 Comments ({results.commentCount})
@@ -426,7 +426,7 @@ function SearchContent() {
       {/* Empty state - no search yet */}
       {!username && !loading && (
         <div className="flex flex-col items-center justify-center py-20">
-          <p className="text-lg text-zinc-400">
+          <p className="text-center text-lg text-zinc-400">
             Enter a Reddit username above to get started.
           </p>
         </div>
