@@ -69,7 +69,7 @@ export default function Header() {
       <div className="mx-auto border border-card-border bg-background/85 backdrop-blur-md" style={shellStyle}>
         <div className="mx-auto flex items-center justify-between px-4 sm:px-6" style={barStyle}>
           <Link href="/" className="flex items-center gap-2">
-            <BrandLogoMark className="h-8 w-8 rounded-lg" iconClassName="h-5 w-5 text-black" />
+            <BrandLogoMark className="h-8 w-8 rounded-lg" iconClassName="object-contain" />
             <span className="text-base font-bold text-foreground sm:text-lg">
               Track<span className="text-green-accent">Their</span>Profile
             </span>
