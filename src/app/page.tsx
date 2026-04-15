@@ -14,15 +14,11 @@ export default function Home() {
           </div>
 
           <h1 className="mb-6 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Uncover any{" "}
-            <span className="text-green-accent">Reddit</span> profile
-            <br />
-            in seconds
+            Lets <span className="italic">Stalk</span> Them
           </h1>
 
           <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
-            Search any username and instantly see all their posts, activity, and
-            digital footprint across Reddit. Powered by deep search technology.
+            Uncover any Reddit profile in seconds
           </p>
 
           <SearchBar />
