@@ -42,20 +42,31 @@ export default function Header() {
     window.location.href = "/";
   };
 
+  const shellStyle = {
+    width: isCompact ? "calc(100% - 1rem)" : "100%",
+    maxWidth: isCompact ? "64rem" : "100%",
+    marginTop: isCompact ? "0.5rem" : "0rem",
+    borderRadius: isCompact ? "1rem" : "0rem",
+    boxShadow: isCompact
+      ? "0 8px 30px rgba(0,0,0,0.35)"
+      : "0 0 0 rgba(0,0,0,0)",
+    transition:
+      "width 360ms cubic-bezier(0.22,1,0.36,1), max-width 360ms cubic-bezier(0.22,1,0.36,1), margin-top 320ms cubic-bezier(0.22,1,0.36,1), border-radius 320ms cubic-bezier(0.22,1,0.36,1), box-shadow 320ms ease",
+    willChange: "width, max-width, margin-top, border-radius, box-shadow",
+  } as const;
+
+  const barStyle = {
+    height: isCompact ? "3.5rem" : "4rem",
+    maxWidth: isCompact ? "100%" : "72rem",
+    transition:
+      "height 320ms cubic-bezier(0.22,1,0.36,1), max-width 360ms cubic-bezier(0.22,1,0.36,1)",
+    willChange: "height, max-width",
+  } as const;
+
   return (
     <header className="sticky top-0 z-50">
-      <div
-        className={`mx-auto transition-all duration-300 ${
-          isCompact
-            ? "mt-2 w-[calc(100%-1rem)] max-w-5xl rounded-2xl border border-card-border bg-background/90 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-md"
-            : "w-full border-b border-card-border bg-background/80 backdrop-blur-md"
-        }`}
-      >
-        <div
-          className={`mx-auto flex items-center justify-between px-4 transition-[height] duration-300 sm:px-6 ${
-            isCompact ? "h-14" : "h-16 max-w-6xl"
-          }`}
-        >
+      <div className="mx-auto border border-card-border bg-background/85 backdrop-blur-md" style={shellStyle}>
+        <div className="mx-auto flex items-center justify-between px-4 sm:px-6" style={barStyle}>
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-accent">
               <svg
