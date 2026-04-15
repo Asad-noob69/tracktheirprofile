@@ -131,7 +131,7 @@ function SignUpContent() {
 
           <p className="mt-3 text-center text-sm text-zinc-500">
             Already have an account?{" "}
-            <a href="/signin" className="text-green-accent hover:text-green-400">
+            <a href="/signin" className="text-green-accent hover:text-[#00ff9d]">
               Sign in
             </a>
           </p>

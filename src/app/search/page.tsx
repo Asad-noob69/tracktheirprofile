@@ -105,7 +105,7 @@ function PaywallOverlay() {
           </div>
           <a
             href="/api/checkout"
-            className="mt-1 rounded-lg bg-green-accent px-7 py-2.5 text-sm font-bold text-black transition-all hover:bg-green-400 hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+            className="mt-1 rounded-lg bg-green-accent px-7 py-2.5 text-sm font-bold text-black transition-all hover:bg-[#00e68d] hover:shadow-[0_0_20px_rgba(0, 255, 157,0.3)]"
           >
             Pay $5 — Lifetime Access
           </a>
@@ -292,12 +292,12 @@ function SearchContent() {
           </p>
           <p className="text-center text-zinc-400">{error}</p>
           {error.includes("Sign up") && (
-            <Link href="/signup" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
+            <Link href="/signup" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-[#00e68d]">
               Sign Up Free
             </Link>
           )}
           {error.includes("Upgrade") && (
-            <a href="/api/checkout" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
+            <a href="/api/checkout" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-[#00e68d]">
               Pay $5 — Lifetime Access
             </a>
           )}

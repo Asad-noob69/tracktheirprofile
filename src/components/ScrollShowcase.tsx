@@ -111,14 +111,14 @@ export default function ScrollShowcase() {
         <div
           className="pointer-events-none absolute -left-[10%] -top-[10%] h-[420px] w-[420px] rounded-full md:h-[600px] md:w-[600px]"
           style={{
-            background: "radial-gradient(circle, rgba(34, 197, 94, 0.16), transparent 70%)",
+            background: "radial-gradient(circle, rgba(0, 255, 157, 0.16), transparent 70%)",
             transform: `translate(${progress * -80}px, ${progress * -120}px)`,
           }}
         />
         <div
           className="pointer-events-none absolute -bottom-[8%] -right-[10%] h-[320px] w-[320px] rounded-full md:h-[450px] md:w-[450px]"
           style={{
-            background: "radial-gradient(circle, rgba(34, 197, 94, 0.12), transparent 70%)",
+            background: "radial-gradient(circle, rgba(0, 255, 157, 0.12), transparent 70%)",
             transform: `translate(${progress * 50}px, ${progress * 100}px)`,
           }}
         />
@@ -186,7 +186,7 @@ export default function ScrollShowcase() {
               key={slide.label}
               className="h-2 transition-all duration-500 ease-out"
               style={{
-                background: i === activeIndex ? "#22c55e" : "rgba(255,255,255,0.12)",
+                background: i === activeIndex ? "#00ff9d" : "rgba(255,255,255,0.12)",
                 width: i === activeIndex ? 24 : 8,
                 borderRadius: i === activeIndex ? 4 : 999,
               }}
@@ -212,7 +212,7 @@ export default function ScrollShowcase() {
             className="h-full rounded-r-sm"
             style={{
               width: `${progress * 100}%`,
-              background: "linear-gradient(90deg, #22c55e, #86efac)",
+              background: "linear-gradient(90deg, #00ff9d, #7fffd2)",
             }}
           />
         </div>

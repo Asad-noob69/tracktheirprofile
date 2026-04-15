@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-const ACCENT = "#22c55e";
-const ACCENT_LIGHT = "rgba(34, 197, 94, 0.14)";
+const ACCENT = "#00ff9d";
+const ACCENT_LIGHT = "rgba(0, 255, 157, 0.14)";
 const CLIP = "polygon(0 0, 100% 0, 90% 100%, 10% 100%)";
 
 interface Stage {
@@ -243,7 +243,7 @@ export default function FunnelSection() {
               </div>
               <div
                 className="mt-4 rounded-lg border px-3 py-2 text-xs leading-5 text-zinc-400"
-                style={{ borderColor: ACCENT_LIGHT, background: "rgba(34, 197, 94, 0.05)" }}
+                style={{ borderColor: ACCENT_LIGHT, background: "rgba(0, 255, 157, 0.05)" }}
               >
                 Estimates shown for illustrative flow sizing. Actual volume varies by target
                 username activity and live source availability.

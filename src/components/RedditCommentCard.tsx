@@ -34,7 +34,7 @@ export default function RedditCommentCard({
       rel="noopener noreferrer"
       className="group block animate-fade-in"
     >
-      <article className="rounded-xl border border-card-border bg-card-bg p-4 transition-all duration-200 hover:border-green-accent/30 hover:bg-[#141414] hover:shadow-[0_0_30px_rgba(34,197,94,0.05)] sm:p-5">
+      <article className="rounded-xl border border-card-border bg-card-bg p-4 transition-all duration-200 hover:border-green-accent/30 hover:bg-[#141414] hover:shadow-[0_0_30px_rgba(0, 255, 157,0.05)] sm:p-5">
         {/* Header: subreddit + time */}
         <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">
           <span className="rounded-md bg-green-accent/10 px-2 py-0.5 font-medium text-green-accent">

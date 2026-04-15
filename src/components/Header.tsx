@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import BrandLogoMark from "@/components/BrandLogoMark";
 
 interface AuthUser {
   userId: string;
@@ -68,21 +69,7 @@ export default function Header() {
       <div className="mx-auto border border-card-border bg-background/85 backdrop-blur-md" style={shellStyle}>
         <div className="mx-auto flex items-center justify-between px-4 sm:px-6" style={barStyle}>
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-accent">
-              <svg
-                className="h-5 w-5 text-black"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                />
-              </svg>
-            </div>
+            <BrandLogoMark className="h-8 w-8 rounded-lg" iconClassName="h-5 w-5 text-black" />
             <span className="text-base font-bold text-foreground sm:text-lg">
               Track<span className="text-green-accent">Their</span>Profile
             </span>
@@ -180,7 +167,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-lg bg-green-accent px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-green-400"
+                  className="rounded-lg bg-green-accent px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-[#00e68d]"
                 >
                   Sign Up
                 </Link>
@@ -264,7 +251,7 @@ export default function Header() {
                   <Link
                     href="/signup"
                     onClick={() => setMobileNavOpen(false)}
-                    className="rounded-lg bg-green-accent px-3 py-2 text-center text-sm font-semibold text-black transition-colors hover:bg-green-400"
+                    className="rounded-lg bg-green-accent px-3 py-2 text-center text-sm font-semibold text-black transition-colors hover:bg-[#00e68d]"
                   >
                     Sign Up
                   </Link>

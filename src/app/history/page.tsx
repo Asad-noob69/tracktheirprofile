@@ -62,7 +62,7 @@ export default function HistoryPage() {
           </div>
           <p className="text-lg font-semibold text-foreground">No searches yet</p>
           <p className="mt-1 text-sm text-zinc-500">Start searching to build your history</p>
-          <Link href="/" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-green-400">
+          <Link href="/" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-[#00e68d]">
             Search Now
           </Link>
         </div>

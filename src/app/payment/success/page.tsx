@@ -44,7 +44,7 @@ export default function PaymentSuccessPage() {
 
         <Link
           href="/search"
-          className="inline-flex items-center gap-2 rounded-lg bg-green-accent px-6 py-3 text-sm font-bold text-black transition-all hover:bg-green-400"
+          className="inline-flex items-center gap-2 rounded-lg bg-green-accent px-6 py-3 text-sm font-bold text-black transition-all hover:bg-[#00e68d]"
         >
           <svg
             className="h-4 w-4"

@@ -10,11 +10,6 @@ export default function Home() {
       <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-20">
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-green-accent/20 bg-green-accent/5 px-4 py-1.5 text-xs text-green-accent sm:text-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-accent"></span>
-            Reddit Profile Intelligence
-          </div>
-
           <h1 className="mb-6 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
             Lets <span className="italic">Stalk</span> Them
           </h1>
@@ -204,7 +199,7 @@ function PricingCard({
     <div
       className={`rounded-xl border p-6 ${
         highlighted
-          ? "border-green-accent/50 bg-green-accent/5 shadow-[0_0_30px_rgba(34,197,94,0.1)]"
+          ? "border-green-accent/50 bg-green-accent/5 shadow-[0_0_30px_rgba(0, 255, 157,0.1)]"
           : "border-card-border bg-card-bg"
       }`}
     >
@@ -243,7 +238,7 @@ function PricingCard({
           href={checkoutHref}
           className={`block w-full rounded-lg py-2.5 text-center text-sm font-semibold transition-all ${
             highlighted
-              ? "bg-green-accent text-black hover:bg-green-400"
+              ? "bg-green-accent text-black hover:bg-[#00e68d]"
               : "border border-card-border bg-background text-foreground hover:border-green-accent/30"
           }`}
         >
@@ -254,7 +249,7 @@ function PricingCard({
           href="/signup"
           className={`block w-full rounded-lg py-2.5 text-center text-sm font-semibold transition-all ${
             highlighted
-              ? "bg-green-accent text-black hover:bg-green-400"
+              ? "bg-green-accent text-black hover:bg-[#00e68d]"
               : "border border-card-border bg-background text-foreground hover:border-green-accent/30"
           }`}
         >

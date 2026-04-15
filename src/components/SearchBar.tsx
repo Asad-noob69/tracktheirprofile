@@ -25,7 +25,7 @@ export default function SearchBar({
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
       <div
-        className={`flex flex-col gap-1.5 rounded-xl border border-card-border bg-card-bg transition-all focus-within:border-green-accent/50 focus-within:shadow-[0_0_20px_rgba(34,197,94,0.1)] sm:flex-row sm:items-center ${
+        className={`flex flex-col gap-1.5 rounded-xl border border-card-border bg-card-bg transition-all focus-within:border-green-accent/50 focus-within:shadow-[0_0_20px_rgba(0, 255, 157,0.1)] sm:flex-row sm:items-center ${
           isLarge ? "p-2" : "p-1.5"
         }`}
       >
@@ -61,7 +61,7 @@ export default function SearchBar({
         <button
           type="submit"
           disabled={username.trim().length === 0}
-          className={`w-full rounded-lg bg-green-accent font-semibold text-black transition-all hover:bg-green-400 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto ${
+          className={`w-full rounded-lg bg-green-accent font-semibold text-black transition-all hover:bg-[#00e68d] disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto ${
             isLarge ? "px-6 py-2.5 text-sm sm:text-base" : "px-4 py-2 text-sm"
           }`}
         >

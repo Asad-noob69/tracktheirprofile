@@ -254,7 +254,7 @@ export default function AdminDashboard() {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full rounded-lg bg-green-accent py-2.5 font-semibold text-black transition-colors hover:bg-green-400 disabled:opacity-50"
+              className="w-full rounded-lg bg-green-accent py-2.5 font-semibold text-black transition-colors hover:bg-[#00e68d] disabled:opacity-50"
             >
               {loginLoading ? "Signing in..." : "Sign In"}
             </button>
@@ -437,7 +437,7 @@ export default function AdminDashboard() {
                 label="Cache Utilization"
                 value={stats.cacheCount}
                 max={100}
-                color="#22c55e"
+                color="#00ff9d"
               />
               <HealthMeter
                 label="Conversion Rate"
@@ -999,14 +999,14 @@ function LineChart({ data }: { data: DailySearch[] }) {
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ height: 160 }} preserveAspectRatio="none">
         <defs>
           <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+            <stop offset="0%" stopColor="#00ff9d" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#00ff9d" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d={areaPath} fill="url(#lineGrad)" />
-        <path d={linePath} fill="none" stroke="#22c55e" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={linePath} fill="none" stroke="#00ff9d" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
         {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="1" fill="#22c55e" />
+          <circle key={i} cx={p.x} cy={p.y} r="1" fill="#00ff9d" />
         ))}
       </svg>
       <div className="mt-2 flex justify-between">
