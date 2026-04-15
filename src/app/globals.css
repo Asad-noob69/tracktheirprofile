@@ -64,11 +64,11 @@ body {
 
 /* Global sparkle overlay */
 .sparkle-field {
-  position: fixed;
+  position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  z-index: 40;
+  z-index: 1;
 }
 
 .sparkle-star {

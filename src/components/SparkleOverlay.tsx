@@ -13,7 +13,11 @@ interface Sparkle {
   rotation: number;
 }
 
-export default function SparkleOverlay() {
+export default function SparkleOverlay({
+  className = "",
+}: {
+  className?: string;
+}) {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const sparkleId = useRef(0);
   const timeoutIds = useRef<number[]>([]);
@@ -33,15 +37,15 @@ export default function SparkleOverlay() {
         id,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: 8 + Math.random() * 10,
-        duration: 900 + Math.random() * 1100,
-        delay: Math.random() * 180,
+        size: 7 + Math.random() * 7,
+        duration: 1100 + Math.random() * 1200,
+        delay: Math.random() * 120,
         rotation: Math.random() * 45 - 22.5,
       };
 
       setSparkles((prev) => {
         const next = [...prev, sparkle];
-        if (next.length > 36) next.shift();
+        if (next.length > 8) next.shift();
         return next;
       });
 
@@ -52,17 +56,16 @@ export default function SparkleOverlay() {
       timeoutIds.current.push(timeout);
     };
 
-    for (let i = 0; i < 14; i += 1) {
-      const bootTimeout = window.setTimeout(() => spawnSparkle(), i * 90);
+    for (let i = 0; i < 3; i += 1) {
+      const bootTimeout = window.setTimeout(() => spawnSparkle(), i * 320);
       timeoutIds.current.push(bootTimeout);
     }
 
     const interval = window.setInterval(() => {
-      const spawnCount = Math.random() < 0.22 ? 2 : 1;
-      for (let i = 0; i < spawnCount; i += 1) {
+      if (Math.random() < 0.42) {
         spawnSparkle();
       }
-    }, 280);
+    }, 950);
 
     return () => {
       window.clearInterval(interval);
@@ -72,7 +75,7 @@ export default function SparkleOverlay() {
   }, []);
 
   return (
-    <div className="sparkle-field" aria-hidden>
+    <div className={`sparkle-field ${className}`.trim()} aria-hidden>
       {sparkles.map((sparkle) => (
         <span
           key={sparkle.id}

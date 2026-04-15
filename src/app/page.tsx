@@ -1,13 +1,15 @@
 import SearchBar from "@/components/SearchBar";
 import FunnelSection from "@/components/FunnelSection";
 import ScrollShowcase from "@/components/ScrollShowcase";
+import SparkleOverlay from "@/components/SparkleOverlay";
 
 export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="flex flex-1 flex-col items-center justify-center px-4 py-16 sm:py-20">
-        <div className="mx-auto max-w-3xl text-center">
+      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-20">
+        <SparkleOverlay />
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           <div className="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-green-accent/20 bg-green-accent/5 px-4 py-1.5 text-xs text-green-accent sm:text-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-green-accent"></span>
             Reddit Profile Intelligence
