@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 export default function SearchBar({
   initialValue = "",
   size = "large",
+  maxWidthClass = "max-w-2xl",
 }: {
   initialValue?: string;
   size?: "large" | "small";
+  maxWidthClass?: string;
 }) {
   const [username, setUsername] = useState(initialValue);
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function SearchBar({
   const isLarge = size === "large";
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl">
+    <form onSubmit={handleSubmit} className={`w-full ${maxWidthClass}`}>
       <div
         className={`flex flex-col gap-1.5 rounded-xl border border-card-border bg-card-bg transition-all focus-within:border-green-accent/50 focus-within:shadow-[0_0_20px_rgba(0, 255, 157,0.1)] sm:flex-row sm:items-center ${
           isLarge ? "p-2" : "p-1.5"

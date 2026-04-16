@@ -7,10 +7,10 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-20">
+      <section className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-4 py-12 sm:py-16">
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <h1 className="mb-6 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
+          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl">
             Lets <span className="italic">Stalk</span> Them
           </h1>
 
@@ -18,7 +18,7 @@ export default function Home() {
             Uncover any Reddit profile in seconds
           </p>
 
-          <SearchBar />
+          <SearchBar maxWidthClass="max-w-4xl" />
 
           <p className="mt-4 text-xs text-zinc-600">
             Try searching: spez, GovSchwarzenegger, thisisbillgates
