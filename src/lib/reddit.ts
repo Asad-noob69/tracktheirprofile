@@ -34,7 +34,7 @@ export interface RedditComment {
   link_permalink: string;
 }
 
-const REDDIT_USER_AGENT = "TrackTheirProfile/1.0";
+const REDDIT_USER_AGENT = "Leadverse/1.0";
 const ARCTIC_SHIFT_BASE = "https://arctic-shift.photon-reddit.com/api";
 
 // Small delay to avoid Reddit rate limits when making many requests

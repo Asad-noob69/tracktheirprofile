@@ -79,7 +79,7 @@ function SignInContent() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
-            Welcome to TrackTheirProfile
+            Welcome to Leadverse
           </h1>
           <p className="text-zinc-400">Sign in with your Google account to continue</p>
         </div>
@@ -124,7 +124,7 @@ function SignInContent() {
           </form>
 
           <p className="mt-4 text-center text-xs text-zinc-500">
-            By signing in, you agree to our terms of service.
+            By signing in, you agree to our <a href="/terms" className="text-green-accent hover:underline">Terms of Service</a> and <a href="/privacy" className="text-green-accent hover:underline">Privacy Policy</a>.
           </p>
         </div>
       </div>

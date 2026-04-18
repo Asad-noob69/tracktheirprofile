@@ -7,7 +7,7 @@ export async function sendNewUserNotification(user: {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
-  const fromEmail = process.env.SMTP_FROM || "noreply@tracktheirprofile.com";
+  const fromEmail = process.env.SMTP_FROM || "noreply@leadverse.ai";
 
   if (!smtpHost || !smtpUser || !smtpPass || !adminEmail) {
     console.log("[email] SMTP not configured, skipping new user notification");
@@ -36,7 +36,7 @@ export async function sendNewUserNotification(user: {
                 <p style="color: #e4e4e7; margin: 0 0 8px;"><strong>Email:</strong> ${user.email}</p>
                 <p style="color: #a1a1aa; margin: 0; font-size: 14px;"><strong>Signed up via:</strong> Google OAuth</p>
               </div>
-              <p style="color: #71717a; font-size: 12px; margin-top: 16px;">— TrackTheirProfile</p>
+              <p style="color: #71717a; font-size: 12px; margin-top: 16px;">— Leadverse</p>
             </div>
           `,
         }),

@@ -24,33 +24,33 @@ interface FunnelLevel {
 
 const journeyStages: Stage[] = [
   {
-    title: "Deep Username Discovery",
+    title: "Username Lookup",
     description:
-      "Search a Reddit username once and pull activity from multiple public sources. Spot more posts and comments faster than manual profile checks.",
+      "Enter a Reddit username and our tool aggregates their publicly available posts and comments from multiple open sources into one view.",
   },
   {
-    title: "Structured Activity Breakdown",
+    title: "Organized Activity Feed",
     description:
-      "Split results into clean post and comment streams with subreddit context, scores, and timestamps so patterns are easy to read on one screen.",
+      "Results are split into clean post and comment streams with subreddit context, scores, and timestamps for easy browsing.",
   },
   {
-    title: "Instant Review Workflow",
+    title: "Research & Export",
     description:
-      "Jump directly from insights to original Reddit threads, export data when needed, and keep research velocity high without tab overload.",
+      "Browse results, jump to original Reddit threads, and export data as CSV for offline analysis or reporting.",
   },
 ];
 
 const closureStage: Stage = {
-  title: "Decide With Confidence",
+  title: "Make Informed Decisions",
   description:
-    "Focus on analysis and decisions while TrackTheirProfile handles the heavy retrieval work behind every username search.",
+    "Use structured public data to support your research, reporting, or moderation workflow — all from a single dashboard.",
 };
 
 const funnelLevels: FunnelLevel[] = [
   {
-    tag: "Usernames Queried",
+    tag: "Usernames Searched",
     stat: "50,000+",
-    text: "public profiles investigated",
+    text: "public profiles looked up",
     widthPct: 100,
     py: 28,
     px: 40,
@@ -58,9 +58,9 @@ const funnelLevels: FunnelLevel[] = [
     textSize: 15,
   },
   {
-    tag: "Profiles Mapped",
+    tag: "Profiles Organized",
     stat: "25,000+",
-    text: "accounts with indexed activity",
+    text: "accounts with structured activity",
     widthPct: 82,
     py: 20,
     px: 32,
@@ -70,7 +70,7 @@ const funnelLevels: FunnelLevel[] = [
   {
     tag: "Posts + Comments",
     stat: "1.2M+",
-    text: "items surfaced for analysis",
+    text: "public items aggregated",
     widthPct: 66,
     py: 14,
     px: 24,
@@ -78,9 +78,9 @@ const funnelLevels: FunnelLevel[] = [
     textSize: 12,
   },
   {
-    tag: "Actionable Insights",
+    tag: "Research Sessions",
     stat: "Daily",
-    text: "decisions powered by live data",
+    text: "researchers using structured data",
     widthPct: 52,
     py: 11,
     px: 20,
@@ -147,13 +147,13 @@ export default function FunnelSection() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center sm:mb-14">
           <h2 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
-            How Reddit Profile
+            How Public Reddit
             <br />
-            <span className="text-green-accent">Intelligence Scales</span>
+            <span className="text-green-accent">Research Works</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
-            TrackTheirProfile turns raw Reddit activity into usable insight so your team
-            can move faster with less manual digging.
+            Leadverse organizes publicly available Reddit activity into a structured
+            format so you can research faster with less manual effort.
           </p>
         </div>
 
@@ -161,7 +161,7 @@ export default function FunnelSection() {
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-white/5 bg-[#161d2b] p-4 sm:p-5">
               <p className="mb-4 text-xs leading-5 text-white/45 sm:text-sm">
-                Our search engine handles the heavy lifting
+                Our search tool handles the aggregation
               </p>
               {journeyStages.map((stage, i) => (
                 <AccordionItem

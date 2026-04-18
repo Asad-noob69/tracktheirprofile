@@ -26,10 +26,10 @@ interface CreditInfo {
 }
 
 const SEARCH_STAGES = [
-  "Fetching Reddit activity across all sort orders...",
-  "Scanning Arctic Shift archive for historical data...",
-  "Searching Reddit with multiple strategies...",
-  "Extracting comments from post threads...",
+  "Fetching public Reddit activity across all sort orders...",
+  "Scanning archive for historical public data...",
+  "Searching public records with multiple strategies...",
+  "Extracting comments from public threads...",
   "Merging and deduplicating results...",
 ];
 
@@ -98,18 +98,19 @@ function PaywallOverlay() {
               Unlock Full Results
             </p>
             <p className="mt-1 max-w-xs text-sm text-zinc-400">
-              You&apos;ve seen the first 10. Pay{" "}
-              <span className="font-semibold text-green-accent">$5</span> once
-              to unlock every post &amp; comment — forever.
+              You&apos;ve seen the first 10 results. Upgrade to{" "}
+              <span className="font-semibold text-green-accent">Lifetime Pro</span>{" "}
+              for just <span className="font-semibold text-green-accent">$5</span>{" "}
+              to view every post &amp; comment.
             </p>
           </div>
           <a
             href="/api/checkout"
             className="mt-1 rounded-lg bg-green-accent px-7 py-2.5 text-sm font-bold text-black transition-all hover:bg-[#00e68d] hover:shadow-[0_0_20px_rgba(0, 255, 157,0.3)]"
           >
-            Pay $5 — Lifetime Access
+            Upgrade to Pro — $5
           </a>
-          <p className="text-xs text-zinc-600">One-time payment. No subscription.</p>
+          <p className="text-xs text-zinc-600">One-time payment. No subscription. <a href="/refund-policy" className="text-zinc-500 hover:text-green-accent">Refund policy</a></p>
         </div>
       </div>
     </div>
@@ -264,17 +265,17 @@ function SearchContent() {
             </div>
           </div>
           <p className="text-sm font-semibold text-green-accent tracking-wide uppercase mb-2">
-            Deep Search Active
+            Searching Public Data
           </p>
           <p className="mb-1 text-center text-base font-medium text-foreground">
-            Searching everywhere for{" "}
+            Looking up public activity for{" "}
             <span className="text-green-accent">u/{username}</span>
           </p>
           <p className="mt-2 min-h-[1.25rem] text-center text-xs text-zinc-500 transition-all duration-700">
             {SEARCH_STAGES[stageIdx]}
           </p>
           <p className="mt-3 text-center text-xs text-zinc-600">
-            Checking 6+ sources — this usually takes 10–30 seconds.
+            Checking multiple public sources — this usually takes 10–30 seconds.
           </p>
         </div>
       )}
@@ -298,7 +299,7 @@ function SearchContent() {
           )}
           {error.includes("Upgrade") && (
             <a href="/api/checkout" className="mt-4 rounded-lg bg-green-accent px-5 py-2 text-sm font-bold text-black hover:bg-[#00e68d]">
-              Pay $5 — Lifetime Access
+              Pay $5 — Upgrade to Pro
             </a>
           )}
         </div>

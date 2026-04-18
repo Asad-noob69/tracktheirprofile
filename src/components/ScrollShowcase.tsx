@@ -13,26 +13,26 @@ const slides: Slide[] = [
   {
     number: 300,
     suffix: "K+",
-    label: "Profiles indexed",
-    sublabel: "Public Reddit activity mapped into searchable structure",
+    label: "Public profiles searched",
+    sublabel: "Publicly available Reddit activity organized into structured results",
   },
   {
     number: 8,
     suffix: "M+",
-    label: "Posts and comments surfaced",
-    sublabel: "Cross-source aggregation for deeper visibility",
+    label: "Posts and comments aggregated",
+    sublabel: "Multi-source aggregation for comprehensive public activity views",
   },
   {
     number: 5,
     suffix: "x",
     label: "Faster research workflows",
-    sublabel: "Compared to manual profile-by-profile investigation",
+    sublabel: "Compared to manually browsing Reddit profile pages one by one",
   },
   {
     number: 24,
     suffix: "/7",
-    label: "Always-on discovery engine",
-    sublabel: "Run searches any time with instant structured output",
+    label: "Always-on search tool",
+    sublabel: "Run searches any time and get instant, organized results",
   },
 ];
 
@@ -148,7 +148,7 @@ export default function ScrollShowcase() {
         />
 
         <p className="absolute top-12 text-[11px] font-bold tracking-[2.8px] text-white/25 sm:text-xs">
-          TRACKTHEIRPROFILE ENGINE
+          LEADVERSE SEARCH ENGINE
         </p>
 
         <div className="relative flex h-[220px] w-full items-center justify-center">

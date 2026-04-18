@@ -11,10 +11,10 @@ const bricolageGrotesque = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "TrackTheirProfile — Reddit Profile Intelligence",
+  title: "Leadverse — Reddit Public Activity Search Tool",
   description:
-    "Search any Reddit username and instantly see all their posts, comments, and activity. The most powerful Reddit profile tracker.",
-  metadataBase: new URL(process.env.APP_URL || "https://tracktheirprofile.com"),
+    "Search any Reddit username and browse their public posts, comments, and activity in one organized dashboard. A research tool for journalists, moderators, and analysts.",
+  metadataBase: new URL(process.env.APP_URL || "https://leadverse.ai"),
   icons: {
     icon: [{ url: "/avatar-removebg.png", type: "image/png" }],
     shortcut: ["/avatar-removebg.png"],
@@ -23,16 +23,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "TrackTheirProfile",
-    title: "TrackTheirProfile — Reddit Profile Intelligence",
+    siteName: "Leadverse",
+    title: "Leadverse — Reddit Public Activity Search Tool",
     description:
-      "Search any Reddit username and instantly see all their posts, comments, and activity. The most powerful Reddit profile tracker.",
+      "Search any Reddit username and browse their public posts, comments, and activity in one organized dashboard.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TrackTheirProfile — Reddit Profile Intelligence",
+    title: "Leadverse — Reddit Public Activity Search Tool",
     description:
-      "Search any Reddit username and instantly see all their posts, comments, and activity.",
+      "Search any Reddit username and browse their public posts and comments.",
   },
   robots: {
     index: true,

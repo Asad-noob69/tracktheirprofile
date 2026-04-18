@@ -82,7 +82,7 @@ function SignUpContent() {
             Create your account
           </h1>
           <p className="text-zinc-400">
-            Join TrackTheirProfile with your Google account
+            Join Leadverse with your Google account
           </p>
         </div>
 
@@ -126,7 +126,7 @@ function SignUpContent() {
           </form>
 
           <p className="mt-4 text-center text-xs text-zinc-500">
-            By signing up, you agree to our terms of service.
+            By signing up, you agree to our <a href="/terms" className="text-green-accent hover:underline">Terms of Service</a> and <a href="/privacy" className="text-green-accent hover:underline">Privacy Policy</a>.
           </p>
 
           <p className="mt-3 text-center text-sm text-zinc-500">

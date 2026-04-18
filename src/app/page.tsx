@@ -2,6 +2,7 @@ import SearchBar from "@/components/SearchBar";
 import FunnelSection from "@/components/FunnelSection";
 import ScrollShowcase from "@/components/ScrollShowcase";
 import SparkleOverlay from "@/components/SparkleOverlay";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -11,11 +12,11 @@ export default function Home() {
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl">
-            Lets <span className="italic">Stalk</span> Them
+            Reddit <span className="text-green-accent">Activity</span> Search
           </h1>
 
           <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
-            Uncover any Reddit profile in seconds
+            Look up any public Reddit profile and browse their posts &amp; comments in one place
           </p>
 
           <SearchBar maxWidthClass="max-w-4xl" />
@@ -29,9 +30,12 @@ export default function Home() {
       {/* Features Section */}
       <section id="features" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
-          <h2 className="mb-10 text-center text-2xl font-bold text-foreground sm:mb-12 sm:text-3xl">
-            Why <span className="text-green-accent">TrackTheirProfile</span>?
+          <h2 className="mb-4 text-center text-2xl font-bold text-foreground sm:mb-6 sm:text-3xl">
+            Built for <span className="text-green-accent">Researchers &amp; Analysts</span>
           </h2>
+          <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-zinc-400 sm:mb-12 sm:text-base">
+            Whether you&apos;re a journalist verifying sources, a moderator reviewing community members, or a researcher studying public discourse — our tool saves you hours of manual work.
+          </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
@@ -42,8 +46,8 @@ export default function Home() {
                   d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                 />
               }
-              title="Deep Search"
-              description="Leverages Google's index to find every single post and comment associated with a Reddit username."
+              title="Comprehensive Search"
+              description="Aggregates publicly available posts and comments from a Reddit username into a single, structured view."
             />
             <FeatureCard
               icon={
@@ -54,18 +58,18 @@ export default function Home() {
                 />
               }
               title="Instant Results"
-              description="Get comprehensive profile data in seconds. No sign-ups, no waiting — just enter a username and go."
+              description="Get organized profile data in seconds. Enter a username and receive a structured summary immediately."
             />
             <FeatureCard
               icon={
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"
                 />
               }
-              title="Full Visibility"
-              description="See post content, scores, comments, subreddits — everything you need to understand someone's Reddit activity."
+              title="Structured Data"
+              description="View posts, scores, comments, and subreddit context organized in a clean, easy-to-read dashboard."
             />
             <FeatureCard
               icon={
@@ -75,19 +79,19 @@ export default function Home() {
                   d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
                 />
               }
-              title="Privacy Focused"
-              description="We only access publicly available information. No scraping private data, no storing results."
+              title="Public Data Only"
+              description="We only aggregate publicly available Reddit content. No private data, no personal information beyond what Reddit already shows."
             />
             <FeatureCard
               icon={
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
                 />
               }
-              title="API Access"
-              description="Need programmatic access? Our API lets you integrate Reddit profile data into your own tools and workflows."
+              title="CSV Export"
+              description="Download search results as a CSV file for offline analysis, reporting, or further research in your preferred tools."
             />
             <FeatureCard
               icon={
@@ -97,8 +101,43 @@ export default function Home() {
                   d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               }
-              title="Real-time Data"
-              description="Results are fetched live from Reddit. You always get the most up-to-date information available."
+              title="Up-to-Date Results"
+              description="Results are fetched live from public Reddit data. You always get the most current information available."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section className="border-t border-card-border px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-10 text-center text-2xl font-bold text-foreground sm:mb-12 sm:text-3xl">
+            Who Uses <span className="text-green-accent">Leadverse</span>?
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <UseCaseCard
+              title="Journalists & Fact-Checkers"
+              description="Verify claims by reviewing a source's public Reddit history. Confirm context and credibility quickly."
+            />
+            <UseCaseCard
+              title="Academic Researchers"
+              description="Study public discourse patterns, community dynamics, and user behavior for social science research."
+            />
+            <UseCaseCard
+              title="Community Moderators"
+              description="Review a user's public activity across subreddits to make informed moderation decisions."
+            />
+            <UseCaseCard
+              title="Personal Audits"
+              description="Review your own Reddit footprint. See what's publicly visible and manage your digital presence."
+            />
+            <UseCaseCard
+              title="Content Analysts"
+              description="Analyze public discussions and trends across subreddits for content research and editorial planning."
+            />
+            <UseCaseCard
+              title="Due Diligence"
+              description="Research publicly available social media activity as part of background research and verification workflows."
             />
           </div>
         </div>
@@ -110,12 +149,11 @@ export default function Home() {
       <section id="pricing" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-2xl font-bold text-foreground sm:text-3xl">
-            Simple pricing
+            Simple, Transparent Pricing
           </h2>
           <p className="mb-12 text-center text-zinc-400">
-            Try free. Unlock everything for{" "}
-            <span className="font-semibold text-green-accent">$5</span> — one
-            time, forever.
+            Start for free. Upgrade to unlimited access for a one-time payment of{" "}
+            <span className="font-semibold text-green-accent">$5</span>.
           </p>
 
           <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
@@ -124,31 +162,43 @@ export default function Home() {
               price="$0"
               period=""
               features={[
-                "5 searches (anonymous)",
-                "20 searches after sign-up",
-                "First 10 posts & comments",
-                "Export to CSV",
+                "5 searches (no account needed)",
+                "20 searches with free account",
+                "Preview of first 10 results",
+                "CSV export included",
               ]}
             />
             <PricingCard
-              name="Lifetime"
+              name="Lifetime Pro"
               price="$5"
               period=" one-time"
               features={[
                 "Unlimited searches",
-                "All posts & comments revealed",
-                "Export to CSV",
-                "Lifetime access — pay once",
+                "Full results — all posts & comments",
+                "CSV export included",
+                "Lifetime access — no subscription",
               ]}
               highlighted
               checkoutHref="/api/checkout"
             />
           </div>
+          <p className="mt-8 text-center text-xs text-zinc-500">
+            See our <Link href="/refund-policy" className="text-green-accent hover:underline">refund policy</Link> for details on our satisfaction guarantee.
+          </p>
         </div>
       </section>
 
       <ScrollShowcase />
     </>
+  );
+}
+
+function UseCaseCard({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="rounded-xl border border-card-border bg-card-bg p-6 transition-all hover:border-green-accent/20">
+      <h3 className="mb-2 text-lg font-semibold text-foreground">{title}</h3>
+      <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
+    </div>
   );
 }
 

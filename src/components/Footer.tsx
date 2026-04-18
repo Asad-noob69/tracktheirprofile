@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import BrandLogoMark from "@/components/BrandLogoMark";
 
 const WHATSAPP_NUMBER = "923097480177";
@@ -26,25 +27,36 @@ export default function Footer() {
       />
       <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10">
-          <div className="flex min-h-[320px] flex-col justify-center">
-            <div className="mb-5 flex items-center gap-5">
-              <BrandLogoMark
-                className="h-28 w-28 rounded-3xl bg-black p-1 sm:h-36 sm:w-36 lg:h-44 lg:w-44"
-                iconClassName="object-contain"
-              />
-              <div>
-                <p className="text-2xl font-bold text-white sm:text-3xl">
-                  TrackTheirProfile
-                </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-zinc-500">
-                  Reddit Profile Intelligence
-                </p>
+          <div className="flex min-h-[320px] flex-col justify-between">
+            <div>
+              <div className="mb-5 flex items-center gap-5">
+                <BrandLogoMark
+                  className="h-28 w-28 rounded-3xl bg-black p-1 sm:h-36 sm:w-36 lg:h-44 lg:w-44"
+                  iconClassName="object-contain"
+                />
+                <div>
+                  <p className="text-2xl font-bold text-white sm:text-3xl">
+                    Leadverse
+                  </p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-zinc-500">
+                    Reddit Public Activity Search
+                  </p>
+                </div>
               </div>
+              <p className="max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
+                A research tool that aggregates publicly available Reddit posts and
+                comments into a single, searchable dashboard for journalists,
+                moderators, researchers, and analysts.
+              </p>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
-              Discover posts, comments, behavior patterns, and footprint history
-              from any public Reddit profile in seconds.
-            </p>
+
+            {/* Legal Links */}
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">
+              <Link href="/pricing" className="transition-colors hover:text-green-accent">Pricing</Link>
+              <Link href="/terms" className="transition-colors hover:text-green-accent">Terms of Service</Link>
+              <Link href="/privacy" className="transition-colors hover:text-green-accent">Privacy Policy</Link>
+              <Link href="/refund-policy" className="transition-colors hover:text-green-accent">Refund Policy</Link>
+            </div>
           </div>
 
           <form
@@ -66,11 +78,11 @@ export default function Footer() {
                 />
               </svg>
               <p className="text-sm font-semibold text-white sm:text-base">
-                Message Us on WhatsApp
+                Contact Support
               </p>
             </div>
             <p className="mt-1 text-xs text-zinc-500">
-              Send your query to +92 309 7480177
+              Send us a message via WhatsApp
             </p>
 
             <label
@@ -106,14 +118,14 @@ export default function Footer() {
                   d="M7.5 7.5a6.364 6.364 0 019 0 6.364 6.364 0 010 9 6.364 6.364 0 01-7.02 1.34l-2.98.66.66-2.98A6.364 6.364 0 017.5 7.5zM10 10.5c.5 1.8 1.7 3 3.5 3.5"
                 />
               </svg>
-              Send on WhatsApp
+              Send Message
             </button>
           </form>
         </div>
 
         <div className="mt-8 border-t border-zinc-900 pt-5">
           <p className="text-center text-xs text-zinc-600">
-            &copy; {new Date().getFullYear()} TrackTheirProfile. All rights reserved.
+            &copy; {new Date().getFullYear()} Leadverse. All rights reserved.
           </p>
         </div>
       </div>

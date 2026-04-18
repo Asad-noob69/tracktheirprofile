@@ -71,7 +71,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <BrandLogoMark className="h-8 w-8 rounded-lg" iconClassName="object-contain" />
             <span className="text-base font-bold text-foreground sm:text-lg">
-              Track<span className="text-green-accent">Their</span>Profile
+              Lead<span className="text-green-accent">verse</span>
             </span>
           </Link>
           <nav className="hidden items-center gap-2 md:flex">
@@ -95,7 +95,7 @@ export default function Header() {
                 Features
               </Link>
               <Link
-                href="/#pricing"
+                href="/pricing"
                 onClick={() => setMenuOpen(false)}
                 className="whitespace-nowrap text-sm text-zinc-400 transition-colors hover:text-green-accent"
               >
@@ -212,7 +212,7 @@ export default function Header() {
                 Features
               </Link>
               <Link
-                href="/#pricing"
+                href="/pricing"
                 onClick={() => setMobileNavOpen(false)}
                 className="rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-green-accent/5 hover:text-green-accent"
               >
