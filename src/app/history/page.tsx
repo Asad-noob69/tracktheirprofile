@@ -50,7 +50,7 @@ export default function HistoryPage() {
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Search <span className="text-green-accent">History</span>
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">Your recent Reddit profile searches</p>
+        <p className="mt-1 text-sm text-zinc-500">Your recent research queries</p>
       </div>
 
       {searches.length === 0 ? (

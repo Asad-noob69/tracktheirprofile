@@ -12,11 +12,11 @@ export default function Home() {
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl">
-            Reddit <span className="text-green-accent">Activity</span> Search
+            Reddit <span className="text-green-accent">Market</span> Research
           </h1>
 
           <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
-            Look up any public Reddit profile and browse their posts &amp; comments in one place
+            Discover what communities are saying — research topics, brands, and trends across Reddit
           </p>
 
           <SearchBar maxWidthClass="max-w-4xl" />
@@ -31,10 +31,10 @@ export default function Home() {
       <section id="features" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-4 text-center text-2xl font-bold text-foreground sm:mb-6 sm:text-3xl">
-            Built for <span className="text-green-accent">Researchers &amp; Analysts</span>
+            Built for <span className="text-green-accent">Market Research &amp; Competitive Analysis</span>
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-zinc-400 sm:mb-12 sm:text-base">
-            Whether you&apos;re a journalist verifying sources, a moderator reviewing community members, or a researcher studying public discourse — our tool saves you hours of manual work.
+            Whether you&apos;re analyzing brand sentiment, researching a market, or studying community trends — our tool saves you hours of manual work.
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,7 +47,7 @@ export default function Home() {
                 />
               }
               title="Comprehensive Search"
-              description="Aggregates publicly available posts and comments from a Reddit username into a single, structured view."
+              description="Aggregates publicly available posts and comments by topic, brand, or author into a single, structured view for research."
             />
             <FeatureCard
               icon={
@@ -58,7 +58,7 @@ export default function Home() {
                 />
               }
               title="Instant Results"
-              description="Get organized profile data in seconds. Enter a username and receive a structured summary immediately."
+              description="Get organized community data in seconds. Enter a keyword or author and receive a structured summary immediately."
             />
             <FeatureCard
               icon={
@@ -80,7 +80,7 @@ export default function Home() {
                 />
               }
               title="Public Data Only"
-              description="We only aggregate publicly available Reddit content. No private data, no personal information beyond what Reddit already shows."
+              description="We only aggregate publicly available Reddit content. No private data — just the public discussions that shape markets and opinions."
             />
             <FeatureCard
               icon={
@@ -102,7 +102,7 @@ export default function Home() {
                 />
               }
               title="Up-to-Date Results"
-              description="Results are fetched live from public Reddit data. You always get the most current information available."
+              description="Results are fetched live from public Reddit data. Always get the most current discussions, sentiment, and trends."
             />
           </div>
         </div>
@@ -116,28 +116,28 @@ export default function Home() {
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <UseCaseCard
-              title="Journalists & Fact-Checkers"
-              description="Verify claims by reviewing a source's public Reddit history. Confirm context and credibility quickly."
+              title="Market Researchers"
+              description="Understand what real users say about products, services, and brands. Gather unfiltered market feedback at scale."
+            />
+            <UseCaseCard
+              title="Competitive Analysts"
+              description="Monitor how competitors are discussed across Reddit communities. Identify strengths, weaknesses, and opportunities."
+            />
+            <UseCaseCard
+              title="Product Teams"
+              description="Research feature requests, pain points, and user sentiment from authentic community discussions before building."
+            />
+            <UseCaseCard
+              title="Content Strategists"
+              description="Discover trending topics, popular discussion themes, and content gaps to inform your editorial calendar."
+            />
+            <UseCaseCard
+              title="Brand Monitoring"
+              description="See how your brand or product is being discussed organically across thousands of subreddit communities."
             />
             <UseCaseCard
               title="Academic Researchers"
-              description="Study public discourse patterns, community dynamics, and user behavior for social science research."
-            />
-            <UseCaseCard
-              title="Community Moderators"
-              description="Review a user's public activity across subreddits to make informed moderation decisions."
-            />
-            <UseCaseCard
-              title="Personal Audits"
-              description="Review your own Reddit footprint. See what's publicly visible and manage your digital presence."
-            />
-            <UseCaseCard
-              title="Content Analysts"
-              description="Analyze public discussions and trends across subreddits for content research and editorial planning."
-            />
-            <UseCaseCard
-              title="Due Diligence"
-              description="Research publicly available social media activity as part of background research and verification workflows."
+              description="Study public discourse patterns, community dynamics, and sentiment trends for social science research."
             />
           </div>
         </div>

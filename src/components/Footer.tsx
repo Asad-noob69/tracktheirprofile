@@ -39,14 +39,14 @@ export default function Footer() {
                     Leadverse
                   </p>
                   <p className="mt-1 text-xs uppercase tracking-[0.16em] text-zinc-500">
-                    Reddit Public Activity Search
+                    Reddit Market Research Tool
                   </p>
                 </div>
               </div>
               <p className="max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
-                A research tool that aggregates publicly available Reddit posts and
-                comments into a single, searchable dashboard for journalists,
-                moderators, researchers, and analysts.
+                A research tool that helps teams analyze Reddit discussions, monitor
+                brand sentiment, and discover market trends across thousands of
+                communities.
               </p>
             </div>
 

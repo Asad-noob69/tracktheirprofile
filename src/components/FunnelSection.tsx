@@ -24,33 +24,33 @@ interface FunnelLevel {
 
 const journeyStages: Stage[] = [
   {
-    title: "Username Lookup",
+    title: "Topic & Brand Search",
     description:
-      "Enter a Reddit username and our tool aggregates their publicly available posts and comments from multiple open sources into one view.",
+      "Enter a topic keyword or Reddit author and our tool aggregates relevant public discussions from multiple sources into one view.",
   },
   {
-    title: "Organized Activity Feed",
+    title: "Organized Discussion Feed",
     description:
-      "Results are split into clean post and comment streams with subreddit context, scores, and timestamps for easy browsing.",
+      "Results are split into clean post and comment streams with subreddit context, sentiment signals, and timestamps for easy analysis.",
   },
   {
-    title: "Research & Export",
+    title: "Analyze & Export",
     description:
-      "Browse results, jump to original Reddit threads, and export data as CSV for offline analysis or reporting.",
+      "Browse insights, jump to original Reddit threads, and export data as CSV for reports, presentations, or further analysis.",
   },
 ];
 
 const closureStage: Stage = {
-  title: "Make Informed Decisions",
+  title: "Make Data-Driven Decisions",
   description:
-    "Use structured public data to support your research, reporting, or moderation workflow — all from a single dashboard.",
+    "Use structured community data to inform your product roadmap, marketing strategy, or research — all from a single dashboard.",
 };
 
 const funnelLevels: FunnelLevel[] = [
   {
-    tag: "Usernames Searched",
+    tag: "Topics Researched",
     stat: "50,000+",
-    text: "public profiles looked up",
+    text: "research queries completed",
     widthPct: 100,
     py: 28,
     px: 40,
@@ -58,9 +58,9 @@ const funnelLevels: FunnelLevel[] = [
     textSize: 15,
   },
   {
-    tag: "Profiles Organized",
+    tag: "Discussions Analyzed",
     stat: "25,000+",
-    text: "accounts with structured activity",
+    text: "threads with structured data",
     widthPct: 82,
     py: 20,
     px: 32,
@@ -70,7 +70,7 @@ const funnelLevels: FunnelLevel[] = [
   {
     tag: "Posts + Comments",
     stat: "1.2M+",
-    text: "public items aggregated",
+    text: "data points collected",
     widthPct: 66,
     py: 14,
     px: 24,
@@ -78,9 +78,9 @@ const funnelLevels: FunnelLevel[] = [
     textSize: 12,
   },
   {
-    tag: "Research Sessions",
+    tag: "Insights Delivered",
     stat: "Daily",
-    text: "researchers using structured data",
+    text: "teams using research data",
     widthPct: 52,
     py: 11,
     px: 20,
@@ -147,13 +147,13 @@ export default function FunnelSection() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center sm:mb-14">
           <h2 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
-            How Public Reddit
+            How Reddit
             <br />
-            <span className="text-green-accent">Research Works</span>
+            <span className="text-green-accent">Market Research Works</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
-            Leadverse organizes publicly available Reddit activity into a structured
-            format so you can research faster with less manual effort.
+            Leadverse organizes public Reddit discussions into structured, actionable
+            data so your team can research faster with less manual effort.
           </p>
         </div>
 

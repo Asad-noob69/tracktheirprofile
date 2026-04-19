@@ -119,7 +119,7 @@ export default function PricingPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <IncludedFeature
             title="Public Data Aggregation"
-            description="We aggregate publicly available Reddit posts and comments for any username into one organized view."
+            description="We aggregate public Reddit discussions, posts, and comments by topic or author into one organized research view."
           />
           <IncludedFeature
             title="Structured Dashboard"
@@ -152,7 +152,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-2xl space-y-6">
           <FaqItem
             question="What data does Leadverse access?"
-            answer="Leadverse only aggregates publicly available Reddit posts and comments. We do not access private messages, deleted content, or any non-public information."
+            answer="Leadverse only aggregates publicly available Reddit posts and comments. We help teams research market trends, brand sentiment, and community discussions. We do not access private messages, deleted content, or any non-public information."
           />
           <FaqItem
             question="Is this a subscription?"

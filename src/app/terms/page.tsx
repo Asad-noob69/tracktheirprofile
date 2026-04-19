@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Leadverse",
-  description: "Terms of Service for Leadverse, the Reddit public activity search tool.",
+  description: "Terms of Service for Leadverse, the Reddit market research and community analysis tool.",
 };
 
 export default function TermsPage() {
@@ -20,9 +20,10 @@ export default function TermsPage() {
         <Section title="1. Introduction">
           <p>
             Welcome to Leadverse (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). Leadverse is a
-            software-as-a-service (SaaS) tool that aggregates publicly available
-            Reddit posts and comments associated with a given username into a
-            single, organized dashboard. By accessing or using our website at
+            software-as-a-service (SaaS) tool that helps businesses and researchers
+            analyze public Reddit discussions, monitor brand sentiment, and discover
+            market trends by aggregating publicly available posts and comments into
+            a structured dashboard. By accessing or using our website at
             leadverse.ai (the &quot;Service&quot;), you agree to be bound by these Terms
             of Service (&quot;Terms&quot;). If you do not agree, please do not use the
             Service.
@@ -31,11 +32,12 @@ export default function TermsPage() {
 
         <Section title="2. Description of the Service">
           <p>
-            Leadverse provides a web-based search tool that allows users to look
-            up a Reddit username and view an aggregated, structured display of
-            that username&apos;s publicly available posts and comments. The Service
-            is designed for legitimate research, journalism, content analysis,
-            community moderation, and personal account auditing purposes.
+            Leadverse provides a web-based research tool that allows users to
+            analyze public Reddit discussions by topic, brand, or author. The
+            Service displays an aggregated, structured view of publicly available
+            posts and comments. It is designed for legitimate market research,
+            competitive analysis, brand monitoring, content strategy, and
+            academic research purposes.
           </p>
           <p>
             The Service only accesses and displays data that is already publicly

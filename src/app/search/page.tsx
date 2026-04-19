@@ -26,10 +26,10 @@ interface CreditInfo {
 }
 
 const SEARCH_STAGES = [
-  "Fetching public Reddit activity across all sort orders...",
-  "Scanning archive for historical public data...",
-  "Searching public records with multiple strategies...",
-  "Extracting comments from public threads...",
+  "Gathering Reddit discussions across all sort orders...",
+  "Scanning archive for historical community data...",
+  "Searching community discussions with multiple strategies...",
+  "Extracting comments from relevant threads...",
   "Merging and deduplicating results...",
 ];
 
@@ -265,10 +265,10 @@ function SearchContent() {
             </div>
           </div>
           <p className="text-sm font-semibold text-green-accent tracking-wide uppercase mb-2">
-            Searching Public Data
+            Researching Topic
           </p>
           <p className="mb-1 text-center text-base font-medium text-foreground">
-            Looking up public activity for{" "}
+            Gathering community data for{" "}
             <span className="text-green-accent">u/{username}</span>
           </p>
           <p className="mt-2 min-h-[1.25rem] text-center text-xs text-zinc-500 transition-all duration-700">

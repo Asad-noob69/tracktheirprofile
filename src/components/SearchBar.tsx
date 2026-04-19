@@ -57,7 +57,14 @@ export default function SearchBar({
             }`}
             maxLength={50}
             autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
             spellCheck={false}
+            name="reddit-lookup-field"
+            id="reddit-lookup-field"
+            data-1p-ignore
+            data-lpignore="true"
+            data-form-type="other"
           />
         </div>
         <button
