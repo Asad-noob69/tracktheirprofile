@@ -35,6 +35,8 @@ const SEARCH_STAGES = [
 
 const FREE_PREVIEW_COUNT = 10;
 
+const BLOCKED_USERNAMES = new Set(["jumpy_paramedic2552", "no-tiger7949"]);
+
 function PaywallOverlay() {
   return (
     <div className="relative mt-4">
@@ -120,6 +122,7 @@ function PaywallOverlay() {
 function SearchContent() {
   const searchParams = useSearchParams();
   const username = searchParams.get("username") || "";
+  const isBlocked = BLOCKED_USERNAMES.has(username.trim().toLowerCase());
 
   const [results, setResults] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -138,6 +141,7 @@ function SearchContent() {
 
   useEffect(() => {
     if (!username) return;
+    if (isBlocked) return;
 
     const controller = new AbortController();
     let stageTimer: ReturnType<typeof setInterval> | null = null;
@@ -196,7 +200,7 @@ function SearchContent() {
       controller.abort();
       if (stageTimer) clearInterval(stageTimer);
     };
-  }, [username]);
+  }, [username, isBlocked]);
 
   const canSeeAll = results?.canSeeAll ?? false;
 
@@ -253,8 +257,23 @@ function SearchContent() {
         </div>
       )}
 
+      {/* Blocked username */}
+      {isBlocked && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-accent/10">
+            <svg className="h-6 w-6 text-green-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <p className="text-center text-lg font-semibold text-foreground">
+            Why are you trying to stalk the admin, huh?
+          </p>
+        </div>
+      )}
+
       {/* Loading state */}
-      {loading && (
+      {!isBlocked && loading && (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="relative mb-6">
             <div className="h-14 w-14 animate-spin rounded-full border-2 border-card-border border-t-green-accent"></div>
