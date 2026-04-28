@@ -72,6 +72,9 @@ export default function Footer() {
             <p className="mt-3 text-xs text-zinc-500">
               Send us a message via WhatsApp
             </p>
+            <p className="mt-2 text-xs text-zinc-500">
+              QA email: <a href="mailto:support@tracktheirprofile.com" className="text-green-accent hover:underline">support@tracktheirprofile.com</a>
+            </p>
             <form onSubmit={handleWhatsAppSend} className="mt-4">
               <textarea
                 id="footer-whatsapp-message"

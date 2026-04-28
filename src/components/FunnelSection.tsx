@@ -241,13 +241,7 @@ export default function FunnelSection() {
                   );
                 })}
               </div>
-              <div
-                className="mt-4 rounded-lg border px-3 py-2 text-xs leading-5 text-zinc-400"
-                style={{ borderColor: ACCENT_LIGHT, background: "rgba(0, 255, 157, 0.05)" }}
-              >
-                Estimates shown for illustrative flow sizing. Actual volume varies by target
-                username activity and live source availability.
-              </div>
+            
             </div>
           </div>
         </div>

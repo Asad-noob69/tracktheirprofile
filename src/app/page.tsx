@@ -12,7 +12,7 @@ export default function Home() {
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl">
-            Lets <span className="text-green-accent italic">"stalk"</span> them
+            Lets <span className="text-green-accent italic">stalk</span> them
           </h1>
 
           <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
@@ -109,41 +109,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Use Cases Section */}
-      <section className="border-t border-card-border px-4 py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="mb-10 text-center text-2xl font-bold text-foreground sm:mb-12 sm:text-3xl">
-            Who Uses <span className="text-green-accent">TrackTheirProfile</span>?
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <UseCaseCard
-              title="Founders"
-              description="Quickly check user profiles to understand audience interests and real community behavior."
-            />
-            <UseCaseCard
-              title="Creators"
-              description="Review active profiles and post styles to discover what content formats perform best."
-            />
-            <UseCaseCard
-              title="Growth Teams"
-              description="Track profile engagement patterns to decide where and how to participate on Reddit."
-            />
-            <UseCaseCard
-              title="Community Managers"
-              description="Inspect history before outreach so replies and DMs are informed and relevant."
-            />
-            <UseCaseCard
-              title="Freelancers"
-              description="Understand client or lead profiles fast before proposing offers or collaboration ideas."
-            />
-            <UseCaseCard
-              title="Power Users"
-              description="Investigate any public profile quickly without bouncing between dozens of Reddit tabs."
-            />
-          </div>
-        </div>
-      </section>
-
+    
       <FunnelSection />
 
       {/* Pricing Section */}
