@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import BrandLogoMark from "@/components/BrandLogoMark";
 
-const WHATSAPP_NUMBER = "923097480177";
+const WHATSAPP_NUMBER = "923705764856";
 
 export default function Footer() {
   const [message, setMessage] = useState("");
