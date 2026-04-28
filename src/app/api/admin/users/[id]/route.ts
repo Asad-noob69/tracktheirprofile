@@ -12,31 +12,54 @@ export async function GET(
 
   try {
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    const skip = (page - 1) * limit;
 
-    const user = await prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        role: true,
-        isPaid: true,
-        searchCredits: true,
-        avatarUrl: true,
-        googleId: true,
-        createdAt: true,
-        searchLogs: {
-          orderBy: { createdAt: "desc" },
-          take: 100,
+    const [user, searchLogsTotal, searchLogs, uniqueSearched] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          role: true,
+          isPaid: true,
+          searchCredits: true,
+          avatarUrl: true,
+          googleId: true,
+          createdAt: true,
         },
-      },
-    });
+      }),
+      prisma.searchLog.count({ where: { userId: id } }),
+      prisma.searchLog.findMany({
+        where: { userId: id },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.searchLog.findMany({
+        where: { userId: id },
+        select: { searchedUsername: true },
+        distinct: ["searchedUsername"],
+      }),
+    ]);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    return NextResponse.json({
+      user: { ...user, searchLogs },
+      uniqueSearched: uniqueSearched.map((u) => u.searchedUsername),
+      pagination: {
+        page,
+        limit,
+        total: searchLogsTotal,
+        totalPages: Math.max(1, Math.ceil(searchLogsTotal / limit)),
+      },
+    });
   } catch (err) {
     console.error("[admin/users/id] GET failed:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 interface User {
   id: string;
@@ -66,7 +67,6 @@ export default function AdminDashboard() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const [topSearched, setTopSearched] = useState<TopSearched[]>([]);
   const [dailySearches, setDailySearches] = useState<DailySearch[]>([]);
   const [cacheEntries, setCacheEntries] = useState<CacheEntry[]>([]);
@@ -75,6 +75,24 @@ export default function AdminDashboard() {
   const [userSearch, setUserSearch] = useState("");
   const [userFilter, setUserFilter] = useState("all");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  // Pagination state
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersTotalPages, setUsersTotalPages] = useState(1);
+  const [usersTotal, setUsersTotal] = useState(0);
+  const USERS_PER_PAGE = 20;
+
+  const [searchLog, setSearchLog] = useState<RecentSearch[]>([]);
+  const [searchLogPage, setSearchLogPage] = useState(1);
+  const [searchLogTotalPages, setSearchLogTotalPages] = useState(1);
+  const [searchLogTotal, setSearchLogTotal] = useState(0);
+  const [searchLogLoading, setSearchLogLoading] = useState(false);
+  const SEARCH_LOG_PER_PAGE = 20;
+
+  const [cachePage, setCachePage] = useState(1);
+  const [cacheTotalPages, setCacheTotalPages] = useState(1);
+  const [cacheTotal, setCacheTotal] = useState(0);
+  const CACHE_PER_PAGE = 20;
 
   async function handleAdminLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -93,6 +111,7 @@ export default function AdminDashboard() {
       setAuthenticated(true);
       fetchData();
       fetchCache();
+      fetchSearchLog();
     } catch {
       setLoginError("Something went wrong");
     } finally {
@@ -105,11 +124,13 @@ export default function AdminDashboard() {
     setAuthenticated(false);
   }
 
-  async function fetchData(search = "", filter = "all") {
+  async function fetchData(search = "", filter = "all", page = 1) {
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (filter !== "all") params.set("filter", filter);
+      params.set("page", String(page));
+      params.set("limit", String(USERS_PER_PAGE));
 
       const res = await fetch(`/api/admin/users?${params}`);
       if (res.status === 403) {
@@ -123,9 +144,12 @@ export default function AdminDashboard() {
       const data = await res.json();
       setUsers(data.users);
       setStats(data.stats);
-      setRecentSearches(data.recentSearches);
       setTopSearched(data.topSearched);
       setDailySearches(data.dailySearches);
+      if (data.pagination) {
+        setUsersTotalPages(data.pagination.totalPages);
+        setUsersTotal(data.pagination.total);
+      }
     } catch {
       // ignore
     } finally {
@@ -133,29 +157,69 @@ export default function AdminDashboard() {
     }
   }
 
-  async function fetchCache() {
+  async function fetchCache(page = 1) {
     try {
-      const res = await fetch("/api/admin/cache");
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("limit", String(CACHE_PER_PAGE));
+      const res = await fetch(`/api/admin/cache?${params}`);
       if (res.ok) {
         const data = await res.json();
         setCacheEntries(data.entries);
+        if (data.pagination) {
+          setCacheTotalPages(data.pagination.totalPages);
+          setCacheTotal(data.pagination.total);
+        }
       }
     } catch {
       // ignore
     }
   }
 
+  async function fetchSearchLog(page = 1) {
+    setSearchLogLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("limit", String(SEARCH_LOG_PER_PAGE));
+      const res = await fetch(`/api/admin/searches?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSearchLog(data.searches);
+        if (data.totalPages) setSearchLogTotalPages(data.totalPages);
+        if (typeof data.total === "number") setSearchLogTotal(data.total);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSearchLogLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchData();
     fetchCache();
+    fetchSearchLog();
   }, []);
 
   useEffect(() => {
+    setUsersPage(1);
+  }, [userSearch, userFilter]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
-      fetchData(userSearch, userFilter);
+      fetchData(userSearch, userFilter, usersPage);
     }, 300);
     return () => clearTimeout(timer);
-  }, [userSearch, userFilter]);
+  }, [userSearch, userFilter, usersPage]);
+
+  useEffect(() => {
+    if (authenticated) fetchCache(cachePage);
+  }, [cachePage]);
+
+  useEffect(() => {
+    if (authenticated) fetchSearchLog(searchLogPage);
+  }, [searchLogPage]);
 
   async function togglePaid(userId: string, isPaid: boolean) {
     await fetch(`/api/admin/users/${userId}`, {
@@ -195,12 +259,12 @@ export default function AdminDashboard() {
   async function clearCache(id?: string) {
     const url = id ? `/api/admin/cache?id=${id}` : "/api/admin/cache";
     await fetch(url, { method: "DELETE" });
-    if (id) {
-      setCacheEntries((prev) => prev.filter((e) => e.id !== id));
+    if (stats) setStats({ ...stats, cacheCount: id ? Math.max(stats.cacheCount - 1, 0) : 0 });
+    if (!id && cachePage !== 1) {
+      setCachePage(1);
     } else {
-      setCacheEntries([]);
+      fetchCache(cachePage);
     }
-    if (stats) setStats({ ...stats, cacheCount: id ? stats.cacheCount - 1 : 0 });
   }
 
   if (loading) {
@@ -278,7 +342,7 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { fetchData(userSearch, userFilter); fetchCache(); }}
+            onClick={() => { fetchData(userSearch, userFilter, usersPage); fetchCache(cachePage); fetchSearchLog(searchLogPage); }}
             className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs text-zinc-300 transition-colors hover:border-green-accent/30 sm:px-4 sm:text-sm"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -457,37 +521,51 @@ export default function AdminDashboard() {
 
           {/* Recent Activity */}
           <div className="rounded-xl border border-card-border bg-card-bg">
-            <div className="border-b border-card-border px-4 py-3 sm:px-5 sm:py-4">
+            <div className="flex flex-col gap-1 border-b border-card-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Recent Activity</h3>
+              <span className="text-[10px] text-zinc-600 sm:text-xs">
+                {searchLogTotal > 0 && (
+                  <>Showing {(searchLogPage - 1) * SEARCH_LOG_PER_PAGE + 1}–{Math.min(searchLogPage * SEARCH_LOG_PER_PAGE, searchLogTotal)} of {searchLogTotal.toLocaleString()}</>
+                )}
+              </span>
             </div>
             <div className="divide-y divide-card-border">
-              {recentSearches.slice(0, 15).map((s) => (
-                <div key={s.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-background/50 sm:gap-4 sm:px-5">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-accent/10 text-xs font-bold text-green-accent">
-                    {s.avatarUrl ? (
-                      <img src={s.avatarUrl} alt="" className="h-8 w-8 rounded-full" />
-                    ) : (
-                      s.performedBy[0]?.toUpperCase() || "?"
-                    )}
+              {searchLogLoading && searchLog.length === 0 ? (
+                <p className="px-5 py-8 text-center text-sm text-zinc-600">Loading…</p>
+              ) : (
+                searchLog.map((s) => (
+                  <div key={s.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-background/50 sm:gap-4 sm:px-5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-accent/10 text-xs font-bold text-green-accent">
+                      {s.avatarUrl ? (
+                        <img src={s.avatarUrl} alt="" className="h-8 w-8 rounded-full" />
+                      ) : (
+                        s.performedBy[0]?.toUpperCase() || "?"
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-foreground truncate sm:text-sm">
+                        <span className="text-zinc-400">{s.performedBy}</span> searched{" "}
+                        <span className="font-medium text-green-accent">u/{s.searchedUsername}</span>
+                      </p>
+                      <p className="text-[10px] text-zinc-600 sm:text-xs">
+                        {s.postCount} posts, {s.commentCount} comments
+                      </p>
+                    </div>
+                    <span className="hidden whitespace-nowrap text-xs text-zinc-600 sm:block">
+                      {timeAgo(new Date(s.createdAt).getTime())}
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-foreground truncate sm:text-sm">
-                      <span className="text-zinc-400">{s.performedBy}</span> searched{" "}
-                      <span className="font-medium text-green-accent">u/{s.searchedUsername}</span>
-                    </p>
-                    <p className="text-[10px] text-zinc-600 sm:text-xs">
-                      {s.postCount} posts, {s.commentCount} comments
-                    </p>
-                  </div>
-                  <span className="hidden whitespace-nowrap text-xs text-zinc-600 sm:block">
-                    {timeAgo(new Date(s.createdAt).getTime())}
-                  </span>
-                </div>
-              ))}
-              {recentSearches.length === 0 && (
+                ))
+              )}
+              {!searchLogLoading && searchLog.length === 0 && (
                 <p className="px-5 py-8 text-center text-sm text-zinc-600">No searches yet</p>
               )}
             </div>
+            {searchLogTotalPages > 1 && (
+              <div className="border-t border-card-border px-4 py-3 sm:px-5">
+                <Pagination page={searchLogPage} totalPages={searchLogTotalPages} onPageChange={setSearchLogPage} />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -524,7 +602,13 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <p className="text-xs text-zinc-500">{users.length} user{users.length !== 1 ? "s" : ""} found</p>
+          <p className="text-xs text-zinc-500">
+            {usersTotal > 0 ? (
+              <>Showing {(usersPage - 1) * USERS_PER_PAGE + 1}–{Math.min(usersPage * USERS_PER_PAGE, usersTotal)} of {usersTotal.toLocaleString()} user{usersTotal !== 1 ? "s" : ""}</>
+            ) : (
+              <>{users.length} user{users.length !== 1 ? "s" : ""} found</>
+            )}
+          </p>
 
           {/* Users - Cards on mobile, Table on desktop */}
           <div className="hidden overflow-x-auto rounded-xl border border-card-border md:block">
@@ -707,6 +791,10 @@ export default function AdminDashboard() {
               <p className="py-12 text-center text-sm text-zinc-600">No users found</p>
             )}
           </div>
+
+          {usersTotalPages > 1 && (
+            <Pagination page={usersPage} totalPages={usersTotalPages} onPageChange={setUsersPage} className="pt-2" />
+          )}
         </div>
       )}
 
@@ -768,8 +856,13 @@ export default function AdminDashboard() {
 
           {/* Full Search Log */}
           <div className="rounded-xl border border-card-border bg-card-bg">
-            <div className="border-b border-card-border px-4 py-3 sm:px-5 sm:py-4">
+            <div className="flex flex-col gap-1 border-b border-card-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">Search Log</h3>
+              <span className="text-[10px] text-zinc-600 sm:text-xs">
+                {searchLogTotal > 0 && (
+                  <>Showing {(searchLogPage - 1) * SEARCH_LOG_PER_PAGE + 1}–{Math.min(searchLogPage * SEARCH_LOG_PER_PAGE, searchLogTotal)} of {searchLogTotal.toLocaleString()}</>
+                )}
+              </span>
             </div>
             {/* Desktop table */}
             <div className="hidden overflow-x-auto sm:block">
@@ -784,7 +877,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-card-border">
-                  {recentSearches.map((s) => (
+                  {searchLog.map((s) => (
                     <tr key={s.id} className="transition-colors hover:bg-background/50">
                       <td className="px-4 py-2.5 text-sm font-medium text-green-accent">u/{s.searchedUsername}</td>
                       <td className="px-4 py-2.5 text-sm text-zinc-300">{s.performedBy}</td>
@@ -797,13 +890,13 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
-              {recentSearches.length === 0 && (
+              {searchLog.length === 0 && !searchLogLoading && (
                 <p className="py-12 text-center text-sm text-zinc-600">No searches yet</p>
               )}
             </div>
             {/* Mobile list */}
             <div className="divide-y divide-card-border sm:hidden">
-              {recentSearches.map((s) => (
+              {searchLog.map((s) => (
                 <div key={s.id} className="px-4 py-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-green-accent">u/{s.searchedUsername}</span>
@@ -816,10 +909,15 @@ export default function AdminDashboard() {
                   </p>
                 </div>
               ))}
-              {recentSearches.length === 0 && (
+              {searchLog.length === 0 && !searchLogLoading && (
                 <p className="py-12 text-center text-sm text-zinc-600">No searches yet</p>
               )}
             </div>
+            {searchLogTotalPages > 1 && (
+              <div className="border-t border-card-border px-4 py-3 sm:px-5">
+                <Pagination page={searchLogPage} totalPages={searchLogTotalPages} onPageChange={setSearchLogPage} />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -828,7 +926,13 @@ export default function AdminDashboard() {
       {activeTab === "cache" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-zinc-400 sm:text-sm">{cacheEntries.length} cached result{cacheEntries.length !== 1 ? "s" : ""}</p>
+            <p className="text-xs text-zinc-400 sm:text-sm">
+              {cacheTotal > 0 ? (
+                <>Showing {(cachePage - 1) * CACHE_PER_PAGE + 1}–{Math.min(cachePage * CACHE_PER_PAGE, cacheTotal)} of {cacheTotal.toLocaleString()} cached result{cacheTotal !== 1 ? "s" : ""}</>
+              ) : (
+                <>{cacheEntries.length} cached result{cacheEntries.length !== 1 ? "s" : ""}</>
+              )}
+            </p>
             {cacheEntries.length > 0 && (
               <button
                 onClick={() => clearCache()}
@@ -917,6 +1021,10 @@ export default function AdminDashboard() {
               <p className="py-12 text-center text-sm text-zinc-600">No cached results</p>
             )}
           </div>
+
+          {cacheTotalPages > 1 && (
+            <Pagination page={cachePage} totalPages={cacheTotalPages} onPageChange={setCachePage} className="pt-2" />
+          )}
         </div>
       )}
     </div>

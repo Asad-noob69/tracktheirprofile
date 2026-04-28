@@ -2,25 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   try {
-    const entries = await prisma.searchCache.findMany({
-      select: {
-        id: true,
-        searchedUsername: true,
-        postCount: true,
-        commentCount: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json({ entries });
+    const [total, entries] = await Promise.all([
+      prisma.searchCache.count(),
+      prisma.searchCache.findMany({
+        select: {
+          id: true,
+          searchedUsername: true,
+          postCount: true,
+          commentCount: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { updatedAt: "desc" },
+        skip,
+        take: limit,
+      }),
+    ]);
+
+    return NextResponse.json({
+      entries,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      },
+    });
   } catch (err) {
     console.error("[admin/cache] GET failed:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

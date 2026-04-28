@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import Pagination from "@/components/Pagination";
+
+const SEARCH_LOG_PER_PAGE = 20;
 
 interface SearchLog {
   id: string;
@@ -27,12 +30,36 @@ export default function AdminUserDetail() {
   const [user, setUser] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [uniqueSearched, setUniqueSearched] = useState<string[]>([]);
+  const [authorized, setAuthorized] = useState(false);
   const router = useRouter();
   const params = useParams();
   const userId = params.id as string;
 
+  const fetchUser = useCallback(async (p: number) => {
+    try {
+      const sp = new URLSearchParams();
+      sp.set("page", String(p));
+      sp.set("limit", String(SEARCH_LOG_PER_PAGE));
+      const res = await fetch(`/api/admin/users/${userId}?${sp}`);
+      if (!res.ok) { setError("User not found"); return; }
+      const data = await res.json();
+      setUser(data.user);
+      if (Array.isArray(data.uniqueSearched)) setUniqueSearched(data.uniqueSearched);
+      if (data.pagination) {
+        setTotalPages(data.pagination.totalPages);
+        setTotal(data.pagination.total);
+      }
+    } catch {
+      setError("Something went wrong");
+    }
+  }, [userId]);
+
   useEffect(() => {
-    async function fetchData() {
+    async function init() {
       try {
         const meRes = await fetch("/api/auth/me");
         const meData = await meRes.json();
@@ -40,20 +67,18 @@ export default function AdminUserDetail() {
           router.push("/");
           return;
         }
-
-        const res = await fetch(`/api/admin/users/${userId}`);
-        if (!res.ok) { setError("User not found"); return; }
-
-        const data = await res.json();
-        setUser(data.user);
-      } catch {
-        setError("Something went wrong");
+        setAuthorized(true);
+        await fetchUser(1);
       } finally {
         setLoading(false);
       }
     }
-    fetchData();
-  }, [router, userId]);
+    init();
+  }, [router, fetchUser]);
+
+  useEffect(() => {
+    if (authorized) fetchUser(page);
+  }, [authorized, page, fetchUser]);
 
   async function togglePaid() {
     if (!user) return;
@@ -90,8 +115,6 @@ export default function AdminUserDetail() {
       </div>
     );
   }
-
-  const uniqueSearched = [...new Set(user.searchLogs.map((s) => s.searchedUsername))];
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
@@ -143,7 +166,7 @@ export default function AdminUserDetail() {
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Total Searches</p>
-          <p className="text-xl font-bold text-green-accent sm:text-2xl">{user.searchLogs.length}</p>
+          <p className="text-xl font-bold text-green-accent sm:text-2xl">{total}</p>
         </div>
         <div className="rounded-xl border border-card-border bg-card-bg p-4">
           <p className="text-xs text-zinc-500">Credits Left</p>
@@ -179,7 +202,14 @@ export default function AdminUserDetail() {
 
       {/* Search History */}
       <div>
-        <h2 className="mb-4 text-lg font-bold text-foreground">Search History</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-foreground">Search History</h2>
+          {total > 0 && (
+            <p className="text-xs text-zinc-500">
+              Showing {(page - 1) * SEARCH_LOG_PER_PAGE + 1}–{Math.min(page * SEARCH_LOG_PER_PAGE, total)} of {total}
+            </p>
+          )}
+        </div>
         <div className="overflow-hidden rounded-xl border border-card-border">
           <table className="hidden w-full sm:table">
             <thead>
@@ -225,6 +255,17 @@ export default function AdminUserDetail() {
             )}
           </div>
         </div>
+        {totalPages > 1 && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={(p) => {
+              setPage(p);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="pt-4"
+          />
+        )}
       </div>
     </div>
   );

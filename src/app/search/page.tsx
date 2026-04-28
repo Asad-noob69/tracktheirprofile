@@ -6,6 +6,7 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import RedditPostCard from "@/components/RedditPostCard";
 import RedditCommentCard from "@/components/RedditCommentCard";
+import Pagination from "@/components/Pagination";
 import { RedditPost, RedditComment } from "@/lib/reddit";
 
 interface SearchResult {
@@ -34,6 +35,7 @@ const SEARCH_STAGES = [
 ];
 
 const FREE_PREVIEW_COUNT = 10;
+const RESULTS_PER_PAGE = 20;
 
 const BLOCKED_USERNAMES = new Set(["jumpy_paramedic2552", "no-tiger7949"]);
 
@@ -130,6 +132,8 @@ function SearchContent() {
   const [activeTab, setActiveTab] = useState<"posts" | "comments">("posts");
   const [stageIdx, setStageIdx] = useState(0);
   const [creditInfo, setCreditInfo] = useState<CreditInfo | null>(null);
+  const [postsPage, setPostsPage] = useState(1);
+  const [commentsPage, setCommentsPage] = useState(1);
 
   // Fetch credit info on mount
   useEffect(() => {
@@ -152,6 +156,8 @@ function SearchContent() {
       setResults(null);
       setActiveTab("posts");
       setStageIdx(0);
+      setPostsPage(1);
+      setCommentsPage(1);
 
       stageTimer = setInterval(() => {
         setStageIdx((i) => (i + 1) % SEARCH_STAGES.length);
@@ -402,18 +408,43 @@ function SearchContent() {
                   title="No posts found"
                   subtitle="This user may not exist or has no public posts."
                 />
-              ) : (
-                <>
-                  <div className="space-y-4">
-                    {results.posts.map((post, i) => (
-                      <div key={post.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
-                        <RedditPostCard post={post} />
+              ) : (() => {
+                  const showPaywall = !canSeeAll && results.postCount > FREE_PREVIEW_COUNT;
+                  const visiblePosts = showPaywall ? results.posts.slice(0, FREE_PREVIEW_COUNT) : results.posts;
+                  const totalPages = Math.max(1, Math.ceil(visiblePosts.length / RESULTS_PER_PAGE));
+                  const safePage = Math.min(postsPage, totalPages);
+                  const start = (safePage - 1) * RESULTS_PER_PAGE;
+                  const pagePosts = visiblePosts.slice(start, start + RESULTS_PER_PAGE);
+                  const showPagination = !showPaywall && totalPages > 1;
+                  return (
+                    <>
+                      {showPagination && (
+                        <p className="mb-3 text-xs text-zinc-500">
+                          Showing {start + 1}–{Math.min(start + RESULTS_PER_PAGE, visiblePosts.length)} of {visiblePosts.length}
+                        </p>
+                      )}
+                      <div className="space-y-4">
+                        {pagePosts.map((post, i) => (
+                          <div key={post.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
+                            <RedditPostCard post={post} />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  {!canSeeAll && results.postCount > FREE_PREVIEW_COUNT && <PaywallOverlay />}
-                </>
-              )}
+                      {showPagination && (
+                        <Pagination
+                          page={safePage}
+                          totalPages={totalPages}
+                          onPageChange={(p) => {
+                            setPostsPage(p);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className="mt-6"
+                        />
+                      )}
+                      {showPaywall && <PaywallOverlay />}
+                    </>
+                  );
+                })()}
             </>
           )}
 
@@ -426,18 +457,43 @@ function SearchContent() {
                   title="No comments found"
                   subtitle="This user may not have any public comments."
                 />
-              ) : (
-                <>
-                  <div className="space-y-4">
-                    {results.comments.map((comment, i) => (
-                      <div key={comment.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
-                        <RedditCommentCard comment={comment} />
+              ) : (() => {
+                  const showPaywall = !canSeeAll && results.commentCount > FREE_PREVIEW_COUNT;
+                  const visibleComments = showPaywall ? results.comments.slice(0, FREE_PREVIEW_COUNT) : results.comments;
+                  const totalPages = Math.max(1, Math.ceil(visibleComments.length / RESULTS_PER_PAGE));
+                  const safePage = Math.min(commentsPage, totalPages);
+                  const start = (safePage - 1) * RESULTS_PER_PAGE;
+                  const pageComments = visibleComments.slice(start, start + RESULTS_PER_PAGE);
+                  const showPagination = !showPaywall && totalPages > 1;
+                  return (
+                    <>
+                      {showPagination && (
+                        <p className="mb-3 text-xs text-zinc-500">
+                          Showing {start + 1}–{Math.min(start + RESULTS_PER_PAGE, visibleComments.length)} of {visibleComments.length}
+                        </p>
+                      )}
+                      <div className="space-y-4">
+                        {pageComments.map((comment, i) => (
+                          <div key={comment.id} style={{ animationDelay: `${Math.min(i, 20) * 50}ms` }}>
+                            <RedditCommentCard comment={comment} />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  {!canSeeAll && results.commentCount > FREE_PREVIEW_COUNT && <PaywallOverlay />}
-                </>
-              )}
+                      {showPagination && (
+                        <Pagination
+                          page={safePage}
+                          totalPages={totalPages}
+                          onPageChange={(p) => {
+                            setCommentsPage(p);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className="mt-6"
+                        />
+                      )}
+                      {showPaywall && <PaywallOverlay />}
+                    </>
+                  );
+                })()}
             </>
           )}
         </>

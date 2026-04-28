@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const filter = searchParams.get("filter") || "all";
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
 
@@ -48,6 +51,7 @@ export async function GET(request: NextRequest) {
 
     const [
       users,
+      filteredUserCount,
       totalSearches,
       searchesToday,
       paidUsers,
@@ -75,7 +79,10 @@ export async function GET(request: NextRequest) {
           _count: { select: { searchLogs: true } },
         },
         orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
       }),
+      prisma.user.count({ where }),
       prisma.searchLog.count(),
       prisma.searchLog.count({ where: { createdAt: { gte: todayStart } } }),
       prisma.user.count({ where: { isPaid: true } }),
@@ -114,6 +121,12 @@ export async function GET(request: NextRequest) {
         searchCount: u._count.searchLogs,
         _count: undefined,
       })),
+      pagination: {
+        page,
+        limit,
+        total: filteredUserCount,
+        totalPages: Math.max(1, Math.ceil(filteredUserCount / limit)),
+      },
       stats: {
         totalUsers,
         paidUsers,

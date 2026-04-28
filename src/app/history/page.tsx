@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Pagination from "@/components/Pagination";
 
 interface SearchEntry {
   id: string;
@@ -12,29 +13,54 @@ interface SearchEntry {
   createdAt: string;
 }
 
+const HISTORY_PER_PAGE = 20;
+
 export default function HistoryPage() {
   const [searches, setSearches] = useState<SearchEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [authorized, setAuthorized] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    async function fetchHistory() {
+    let cancelled = false;
+    (async () => {
       const meRes = await fetch("/api/auth/me");
       const meData = await meRes.json();
+      if (cancelled) return;
       if (!meData.user) {
         router.push("/signin");
         return;
       }
+      setAuthorized(true);
+    })();
+    return () => { cancelled = true; };
+  }, [router]);
 
-      const res = await fetch("/api/history");
+  useEffect(() => {
+    if (!authorized) return;
+    let cancelled = false;
+    (async () => {
+      const sp = new URLSearchParams();
+      sp.set("page", String(page));
+      sp.set("limit", String(HISTORY_PER_PAGE));
+      const res = await fetch(`/api/history?${sp}`);
+      if (cancelled) return;
       if (res.ok) {
         const data = await res.json();
+        if (cancelled) return;
         setSearches(data.searches);
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages);
+          setTotal(data.pagination.total);
+        }
       }
       setLoading(false);
-    }
-    fetchHistory();
-  }, [router]);
+    })();
+    return () => { cancelled = true; };
+  }, [authorized, page]);
 
   if (loading) {
     return (
@@ -50,10 +76,14 @@ export default function HistoryPage() {
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Search <span className="text-green-accent">History</span>
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">Your recent research queries</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          {total > 0
+            ? `Showing ${(page - 1) * HISTORY_PER_PAGE + 1}–${Math.min(page * HISTORY_PER_PAGE, total)} of ${total} ${total === 1 ? "query" : "queries"}`
+            : "Your recent research queries"}
+        </p>
       </div>
 
-      {searches.length === 0 ? (
+      {total === 0 && searches.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
             <svg className="h-6 w-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,6 +145,17 @@ export default function HistoryPage() {
               </div>
             </Link>
           ))}
+          {totalPages > 1 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={(p) => {
+                setPage(p);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="pt-4"
+            />
+          )}
         </div>
       )}
     </div>
