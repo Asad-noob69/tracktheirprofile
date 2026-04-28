@@ -13,7 +13,7 @@ export default function BrandLogoMark({
     <div className={`relative overflow-hidden ${className}`}>
       <Image
         src="/avatar-removebg.png"
-        alt="Leadverse logo"
+        alt="TrackTheirProfile logo"
         fill
         sizes="(max-width: 768px) 24px, 32px"
         className={iconClassName}

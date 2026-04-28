@@ -82,7 +82,7 @@ function SignUpContent() {
             Create your account
           </h1>
           <p className="text-zinc-400">
-            Join Leadverse with your Google account
+            Join TrackTheirProfile with your Google account
           </p>
         </div>
 

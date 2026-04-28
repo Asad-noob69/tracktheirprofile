@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Leadverse",
-  description: "Privacy Policy for Leadverse. Learn how we collect, use, and protect your data.",
+  title: "Privacy Policy — TrackTheirProfile",
+  description: "Privacy Policy for TrackTheirProfile. Learn how we collect, use, and protect your data.",
 };
 
 export default function PrivacyPage() {
@@ -19,10 +19,10 @@ export default function PrivacyPage() {
       <div className="prose-sm space-y-8 text-zinc-300">
         <Section title="1. Introduction">
           <p>
-            Leadverse (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting
+            TrackTheirProfile (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting
             your privacy. This Privacy Policy explains how we collect, use,
             disclose, and safeguard your information when you use our website
-            and service at leadverse.ai (the &quot;Service&quot;).
+            and service at tracktheirprofile.com (the &quot;Service&quot;).
           </p>
         </Section>
 
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
           <ul className="ml-4 list-disc space-y-1.5">
             <li><strong className="text-zinc-300">Payment processing:</strong> We share necessary transaction data with our payment processor to complete purchases.</li>
             <li><strong className="text-zinc-300">Legal compliance:</strong> We may disclose information if required by law, regulation, legal process, or governmental request.</li>
-            <li><strong className="text-zinc-300">Protection of rights:</strong> We may disclose information to protect the rights, property, or safety of Leadverse, our users, or the public.</li>
+            <li><strong className="text-zinc-300">Protection of rights:</strong> We may disclose information to protect the rights, property, or safety of TrackTheirProfile, our users, or the public.</li>
           </ul>
         </Section>
 
@@ -139,8 +139,8 @@ export default function PrivacyPage() {
           </ul>
           <p>
             To exercise any of these rights, please contact us at{" "}
-            <a href="mailto:support@leadverse.ai" className="text-green-accent hover:underline">
-              support@leadverse.ai
+            <a href="mailto:support@tracktheirprofile.com" className="text-green-accent hover:underline">
+              support@tracktheirprofile.com
             </a>.
           </p>
         </Section>
@@ -175,8 +175,8 @@ export default function PrivacyPage() {
           <p>
             If you have questions or concerns about this Privacy Policy, please
             contact us at:{" "}
-            <a href="mailto:support@leadverse.ai" className="text-green-accent hover:underline">
-              support@leadverse.ai
+            <a href="mailto:support@tracktheirprofile.com" className="text-green-accent hover:underline">
+              support@tracktheirprofile.com
             </a>
           </p>
         </Section>

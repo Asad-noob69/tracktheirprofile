@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing — Leadverse",
+  title: "Pricing — TrackTheirProfile",
   description:
-    "Simple, transparent pricing for Leadverse. Start free or upgrade to Lifetime Pro for $5 one-time.",
+    "Simple, transparent pricing for TrackTheirProfile. Start free or upgrade to Lifetime Pro for $5 one-time.",
 };
 
 export default function PricingPage() {
@@ -151,8 +151,8 @@ export default function PricingPage() {
         </h2>
         <div className="mx-auto max-w-2xl space-y-6">
           <FaqItem
-            question="What data does Leadverse access?"
-            answer="Leadverse only aggregates publicly available Reddit posts and comments. We help teams research market trends, brand sentiment, and community discussions. We do not access private messages, deleted content, or any non-public information."
+            question="What data does TrackTheirProfile access?"
+            answer="TrackTheirProfile only aggregates publicly available Reddit posts and comments. We do not access private messages, deleted content, or any non-public information."
           />
           <FaqItem
             question="Is this a subscription?"

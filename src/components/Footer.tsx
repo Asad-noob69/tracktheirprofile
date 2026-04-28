@@ -21,22 +21,17 @@ export default function Footer() {
 
   return (
     <footer className="relative overflow-hidden border-t border-zinc-900 bg-black">
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[280px] w-[220vw] -translate-x-1/2 -translate-y-[78%] rounded-[100%] border-t border-green-accent/85 shadow-[0_0_90px_rgba(0,255,157,0.45)]"
-        aria-hidden
-      />
       <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr_1.2fr] lg:gap-14">
           {/* Left: big logo + description */}
           <div className="flex flex-col">
             <BrandLogoMark
-              className="h-48 w-48 rounded-3xl bg-black p-1 sm:h-60 sm:w-60 lg:h-72 lg:w-72"
-              iconClassName="object-contain"
+              className="h-48 w-48 sm:h-60 sm:w-60 lg:h-72 lg:w-72"
+              iconClassName="object-contain mix-blend-screen"
             />
             <p className="mt-6 max-w-md text-sm leading-7 text-zinc-400">
-              Leadverse is a research tool that helps teams analyze Reddit
-              discussions, monitor brand sentiment, and discover market trends
-              across thousands of communities.
+              TrackTheirProfile helps you inspect any public Reddit profile,
+              review post history, and spot patterns in seconds.
             </p>
           </div>
 
@@ -112,7 +107,7 @@ export default function Footer() {
 
         <div className="mt-10 border-t border-zinc-900 pt-5">
           <p className="text-center text-xs text-zinc-600">
-            &copy; {new Date().getFullYear()} Leadverse. All rights reserved.
+            &copy; {new Date().getFullYear()} TrackTheirProfile. All rights reserved.
           </p>
         </div>
       </div>

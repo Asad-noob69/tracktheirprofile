@@ -11,10 +11,10 @@ const bricolageGrotesque = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Leadverse — Reddit Market Research & Community Analysis Tool",
+  title: "TrackTheirProfile — Reddit Profile Tracker",
   description:
-    "Research brands, topics, and trends across Reddit. Aggregate community discussions into organized, exportable reports for market research and competitive analysis.",
-  metadataBase: new URL(process.env.APP_URL || "https://leadverse.ai"),
+    "Track any public Reddit profile in seconds. Explore posts, comments, and profile activity in one place.",
+  metadataBase: new URL(process.env.APP_URL || "https://tracktheirprofile.com"),
   icons: {
     icon: [{ url: "/avatar-removebg.png", type: "image/png" }],
     shortcut: ["/avatar-removebg.png"],
@@ -23,16 +23,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Leadverse",
-    title: "Leadverse — Reddit Market Research & Community Analysis Tool",
+    siteName: "TrackTheirProfile",
+    title: "TrackTheirProfile — Reddit Profile Tracker",
     description:
-      "Research brands, topics, and trends across Reddit. Aggregate discussions into organized reports for market research.",
+      "Track public Reddit profiles, posts, and comments in one place.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Leadverse — Reddit Market Research & Community Analysis Tool",
+    title: "TrackTheirProfile — Reddit Profile Tracker",
     description:
-      "Research brands, topics, and trends across Reddit communities.",
+      "Stalk any reddit profile in seconds.",
   },
   robots: {
     index: true,

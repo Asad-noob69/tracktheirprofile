@@ -71,7 +71,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <BrandLogoMark className="h-8 w-8 rounded-lg" iconClassName="object-contain" />
             <span className="text-base font-bold text-foreground sm:text-lg">
-              Lead<span className="text-green-accent">verse</span>
+              Track<span className="text-green-accent">TheirProfile</span>
             </span>
           </Link>
           <nav className="hidden items-center gap-2 md:flex">

@@ -12,11 +12,11 @@ export default function Home() {
         <SparkleOverlay />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl">
-            Reddit <span className="text-green-accent">Market</span> Research
+            Lets <span className="text-green-accent italic">"stalk"</span> them
           </h1>
 
           <p className="mx-auto mb-8 max-w-xl text-base text-zinc-400 sm:mb-10 sm:text-lg">
-            Discover what communities are saying — research topics, brands, and trends across Reddit
+            stalk any reddit profile in seconds
           </p>
 
           <SearchBar maxWidthClass="max-w-4xl" />
@@ -31,10 +31,11 @@ export default function Home() {
       <section id="features" className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-4 text-center text-2xl font-bold text-foreground sm:mb-6 sm:text-3xl">
-            Built for <span className="text-green-accent">Market Research &amp; Competitive Analysis</span>
+            Built for <span className="text-green-accent">Fast Reddit Profile Tracking</span>
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-zinc-400 sm:mb-12 sm:text-base">
-            Whether you&apos;re analyzing brand sentiment, researching a market, or studying community trends — our tool saves you hours of manual work.
+            Enter a username and instantly inspect posts, comments, activity patterns,
+            and profile behavior without manual digging.
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,7 +48,7 @@ export default function Home() {
                 />
               }
               title="Comprehensive Search"
-              description="Aggregates publicly available posts and comments by topic, brand, or author into a single, structured view for research."
+              description="Aggregates publicly available posts and comments by username into one clean profile view."
             />
             <FeatureCard
               icon={
@@ -58,7 +59,7 @@ export default function Home() {
                 />
               }
               title="Instant Results"
-              description="Get organized community data in seconds. Enter a keyword or author and receive a structured summary immediately."
+              description="Get a full snapshot in seconds. Enter a Reddit username and see organized results immediately."
             />
             <FeatureCard
               icon={
@@ -69,7 +70,7 @@ export default function Home() {
                 />
               }
               title="Structured Data"
-              description="View posts, scores, comments, and subreddit context organized in a clean, easy-to-read dashboard."
+              description="View posts, comments, scores, and subreddit context in a clean, easy-to-read layout."
             />
             <FeatureCard
               icon={
@@ -80,7 +81,7 @@ export default function Home() {
                 />
               }
               title="Public Data Only"
-              description="We only aggregate publicly available Reddit content. No private data — just the public discussions that shape markets and opinions."
+              description="We only aggregate publicly available Reddit content. No private data, no hidden access."
             />
             <FeatureCard
               icon={
@@ -91,7 +92,7 @@ export default function Home() {
                 />
               }
               title="CSV Export"
-              description="Download search results as a CSV file for offline analysis, reporting, or further research in your preferred tools."
+              description="Download profile results as CSV for your own review, notes, or automation workflows."
             />
             <FeatureCard
               icon={
@@ -102,7 +103,7 @@ export default function Home() {
                 />
               }
               title="Up-to-Date Results"
-              description="Results are fetched live from public Reddit data. Always get the most current discussions, sentiment, and trends."
+              description="Results are fetched live from public Reddit data so profile activity stays fresh."
             />
           </div>
         </div>
@@ -112,32 +113,32 @@ export default function Home() {
       <section className="border-t border-card-border px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-10 text-center text-2xl font-bold text-foreground sm:mb-12 sm:text-3xl">
-            Who Uses <span className="text-green-accent">Leadverse</span>?
+            Who Uses <span className="text-green-accent">TrackTheirProfile</span>?
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <UseCaseCard
-              title="Market Researchers"
-              description="Understand what real users say about products, services, and brands. Gather unfiltered market feedback at scale."
+              title="Founders"
+              description="Quickly check user profiles to understand audience interests and real community behavior."
             />
             <UseCaseCard
-              title="Competitive Analysts"
-              description="Monitor how competitors are discussed across Reddit communities. Identify strengths, weaknesses, and opportunities."
+              title="Creators"
+              description="Review active profiles and post styles to discover what content formats perform best."
             />
             <UseCaseCard
-              title="Product Teams"
-              description="Research feature requests, pain points, and user sentiment from authentic community discussions before building."
+              title="Growth Teams"
+              description="Track profile engagement patterns to decide where and how to participate on Reddit."
             />
             <UseCaseCard
-              title="Content Strategists"
-              description="Discover trending topics, popular discussion themes, and content gaps to inform your editorial calendar."
+              title="Community Managers"
+              description="Inspect history before outreach so replies and DMs are informed and relevant."
             />
             <UseCaseCard
-              title="Brand Monitoring"
-              description="See how your brand or product is being discussed organically across thousands of subreddit communities."
+              title="Freelancers"
+              description="Understand client or lead profiles fast before proposing offers or collaboration ideas."
             />
             <UseCaseCard
-              title="Academic Researchers"
-              description="Study public discourse patterns, community dynamics, and sentiment trends for social science research."
+              title="Power Users"
+              description="Investigate any public profile quickly without bouncing between dozens of Reddit tabs."
             />
           </div>
         </div>

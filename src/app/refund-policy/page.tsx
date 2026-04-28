@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refund Policy — Leadverse",
-  description: "Refund Policy for Leadverse. Learn about our 7-day money-back guarantee.",
+  title: "Refund Policy — TrackTheirProfile",
+  description: "Refund Policy for TrackTheirProfile. Learn about our 7-day money-back guarantee.",
 };
 
 export default function RefundPolicyPage() {
@@ -19,7 +19,7 @@ export default function RefundPolicyPage() {
       <div className="prose-sm space-y-8 text-zinc-300">
         <Section title="Overview">
           <p>
-            At Leadverse, we want you to be completely satisfied with your
+            At TrackTheirProfile, we want you to be completely satisfied with your
             purchase. If you are not happy with the Lifetime Pro plan, we offer
             a straightforward refund process.
           </p>
@@ -39,8 +39,8 @@ export default function RefundPolicyPage() {
           <ul className="ml-4 list-disc space-y-1.5">
             <li>
               <strong className="text-zinc-300">Email:</strong>{" "}
-              <a href="mailto:support@leadverse.ai" className="text-green-accent hover:underline">
-                support@leadverse.ai
+              <a href="mailto:support@tracktheirprofile.com" className="text-green-accent hover:underline">
+                support@tracktheirprofile.com
               </a>
             </li>
             <li>
@@ -65,7 +65,7 @@ export default function RefundPolicyPage() {
 
         <Section title="Non-Refundable Items">
           <p>
-            The free tier of Leadverse does not involve any payment and
+            The free tier of TrackTheirProfile does not involve any payment and
             therefore is not subject to this refund policy. This refund policy
             applies exclusively to the paid Lifetime Pro plan.
           </p>
@@ -94,8 +94,8 @@ export default function RefundPolicyPage() {
           <p>
             If you have questions about our refund policy, please contact us
             at:{" "}
-            <a href="mailto:support@leadverse.ai" className="text-green-accent hover:underline">
-              support@leadverse.ai
+            <a href="mailto:support@tracktheirprofile.com" className="text-green-accent hover:underline">
+              support@tracktheirprofile.com
             </a>
           </p>
         </Section>

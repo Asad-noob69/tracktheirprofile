@@ -147,13 +147,13 @@ export default function FunnelSection() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center sm:mb-14">
           <h2 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
-            How Reddit
+            How Reddit Profile
             <br />
-            <span className="text-green-accent">Market Research Works</span>
+            <span className="text-green-accent">Tracking Works</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-400 sm:text-base">
-            Leadverse organizes public Reddit discussions into structured, actionable
-            data so your team can research faster with less manual effort.
+            TrackTheirProfile organizes public Reddit posts and comments into a
+            structured profile view so you can inspect activity faster with less manual effort.
           </p>
         </div>
 

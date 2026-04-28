@@ -79,7 +79,7 @@ function SignInContent() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
-            Welcome to Leadverse
+            Welcome to TrackTheirProfile
           </h1>
           <p className="text-zinc-400">Sign in with your Google account to continue</p>
         </div>

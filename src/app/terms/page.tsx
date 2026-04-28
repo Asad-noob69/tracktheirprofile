@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Leadverse",
-  description: "Terms of Service for Leadverse, the Reddit market research and community analysis tool.",
+  title: "Terms of Service — TrackTheirProfile",
+  description: "Terms of Service for TrackTheirProfile, the Reddit profile tracking tool.",
 };
 
 export default function TermsPage() {
@@ -19,12 +19,11 @@ export default function TermsPage() {
       <div className="prose-sm space-y-8 text-zinc-300">
         <Section title="1. Introduction">
           <p>
-            Welcome to Leadverse (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). Leadverse is a
-            software-as-a-service (SaaS) tool that helps businesses and researchers
-            analyze public Reddit discussions, monitor brand sentiment, and discover
-            market trends by aggregating publicly available posts and comments into
-            a structured dashboard. By accessing or using our website at
-            leadverse.ai (the &quot;Service&quot;), you agree to be bound by these Terms
+            Welcome to TrackTheirProfile (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). TrackTheirProfile is a
+            software-as-a-service (SaaS) tool that helps users inspect public
+            Reddit profile activity by aggregating publicly available posts and
+            comments into a structured dashboard. By accessing or using our
+            website at tracktheirprofile.com (the &quot;Service&quot;), you agree to be bound by these Terms
             of Service (&quot;Terms&quot;). If you do not agree, please do not use the
             Service.
           </p>
@@ -32,12 +31,10 @@ export default function TermsPage() {
 
         <Section title="2. Description of the Service">
           <p>
-            Leadverse provides a web-based research tool that allows users to
-            analyze public Reddit discussions by topic, brand, or author. The
+            TrackTheirProfile provides a web-based profile tracking tool that allows users to
+            inspect public Reddit activity by author. The
             Service displays an aggregated, structured view of publicly available
-            posts and comments. It is designed for legitimate market research,
-            competitive analysis, brand monitoring, content strategy, and
-            academic research purposes.
+            posts and comments.
           </p>
           <p>
             The Service only accesses and displays data that is already publicly
@@ -75,7 +72,7 @@ export default function TermsPage() {
 
         <Section title="5. Payments and Billing">
           <p>
-            Leadverse offers a free tier with limited searches and a paid
+            TrackTheirProfile offers a free tier with limited searches and a paid
             &quot;Lifetime Pro&quot; plan for a one-time payment of $5 (USD). The
             Lifetime Pro plan grants unlimited access to full search results
             with no recurring charges.
@@ -103,14 +100,14 @@ export default function TermsPage() {
         <Section title="7. Intellectual Property">
           <p>
             All content, design, graphics, code, and other materials on the
-            Leadverse website are owned by Leadverse or its licensors and are
+            TrackTheirProfile website are owned by TrackTheirProfile or its licensors and are
             protected by applicable intellectual property laws. You may not copy,
             modify, distribute, or reproduce any part of the Service without
             our written permission.
           </p>
           <p>
             Reddit content displayed through the Service remains the property
-            of Reddit and its respective authors. Leadverse does not claim
+            of Reddit and its respective authors. TrackTheirProfile does not claim
             ownership of any Reddit content.
           </p>
         </Section>
@@ -127,7 +124,7 @@ export default function TermsPage() {
 
         <Section title="9. Limitation of Liability">
           <p>
-            To the maximum extent permitted by law, Leadverse and its owners,
+            To the maximum extent permitted by law, TrackTheirProfile and its owners,
             officers, employees, and agents shall not be liable for any
             indirect, incidental, special, consequential, or punitive damages
             arising from your use of the Service.
@@ -165,7 +162,7 @@ export default function TermsPage() {
         <Section title="13. Governing Law">
           <p>
             These Terms shall be governed by and construed in accordance with
-            the laws of the jurisdiction in which Leadverse operates, without
+            the laws of the jurisdiction in which TrackTheirProfile operates, without
             regard to conflict of law provisions.
           </p>
         </Section>
@@ -174,10 +171,10 @@ export default function TermsPage() {
           <p>
             If you have questions about these Terms, please contact us at:{" "}
             <a
-              href="mailto:support@leadverse.ai"
+              href="mailto:support@tracktheirprofile.com"
               className="text-green-accent hover:underline"
             >
-              support@leadverse.ai
+              support@tracktheirprofile.com
             </a>
           </p>
         </Section>
