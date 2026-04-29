@@ -65,3 +65,17 @@ model SearchCache {
 
   @@index([updatedAt])
 }
+
+model NsfwCheck {
+  id               String   @id @default(cuid())
+  userId           String?
+  sessionId        String?
+  checkedUsername  String
+  isNsfw           Boolean  @default(false)
+  found            Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([checkedUsername])
+  @@index([createdAt])
+}

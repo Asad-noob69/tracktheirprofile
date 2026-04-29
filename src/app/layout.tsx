@@ -3,6 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import NsfwCheckPopup from "@/components/NsfwCheckPopup";
 import "./globals.css";
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -56,6 +57,7 @@ export default function RootLayout({
           <main className="flex flex-1 flex-col">{children}</main>
         </ErrorBoundary>
         <Footer />
+        <NsfwCheckPopup />
       </body>
     </html>
   );

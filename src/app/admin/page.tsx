@@ -56,7 +56,17 @@ interface Stats {
   newUsersThisWeek: number;
 }
 
-type Tab = "overview" | "users" | "searches" | "cache";
+interface NsfwCheck {
+  id: string;
+  checkedUsername: string;
+  isNsfw: boolean;
+  found: boolean;
+  createdAt: string;
+  performedBy: string;
+  avatarUrl: string | null;
+}
+
+type Tab = "overview" | "users" | "searches" | "nsfw" | "cache";
 
 export default function AdminDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -94,6 +104,13 @@ export default function AdminDashboard() {
   const [cacheTotal, setCacheTotal] = useState(0);
   const CACHE_PER_PAGE = 20;
 
+  const [nsfwChecks, setNsfwChecks] = useState<NsfwCheck[]>([]);
+  const [nsfwPage, setNsfwPage] = useState(1);
+  const [nsfwTotalPages, setNsfwTotalPages] = useState(1);
+  const [nsfwTotal, setNsfwTotal] = useState(0);
+  const [nsfwLoading, setNsfwLoading] = useState(false);
+  const NSFW_PER_PAGE = 20;
+
   async function handleAdminLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginError("");
@@ -112,6 +129,7 @@ export default function AdminDashboard() {
       fetchData();
       fetchCache();
       fetchSearchLog();
+      fetchNsfwChecks();
     } catch {
       setLoginError("Something went wrong");
     } finally {
@@ -196,10 +214,31 @@ export default function AdminDashboard() {
     }
   }
 
+  async function fetchNsfwChecks(page = 1) {
+    setNsfwLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("limit", String(NSFW_PER_PAGE));
+      const res = await fetch(`/api/admin/nsfw-checks?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setNsfwChecks(data.checks);
+        if (data.totalPages) setNsfwTotalPages(data.totalPages);
+        if (typeof data.total === "number") setNsfwTotal(data.total);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setNsfwLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchData();
     fetchCache();
     fetchSearchLog();
+    fetchNsfwChecks();
   }, []);
 
   useEffect(() => {
@@ -220,6 +259,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (authenticated) fetchSearchLog(searchLogPage);
   }, [searchLogPage]);
+
+  useEffect(() => {
+    if (authenticated) fetchNsfwChecks(nsfwPage);
+  }, [nsfwPage]);
 
   async function togglePaid(userId: string, isPaid: boolean) {
     await fetch(`/api/admin/users/${userId}`, {
@@ -342,7 +385,7 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { fetchData(userSearch, userFilter, usersPage); fetchCache(cachePage); fetchSearchLog(searchLogPage); }}
+            onClick={() => { fetchData(userSearch, userFilter, usersPage); fetchCache(cachePage); fetchSearchLog(searchLogPage); fetchNsfwChecks(nsfwPage); }}
             className="flex items-center gap-2 rounded-lg border border-card-border bg-card-bg px-3 py-2 text-xs text-zinc-300 transition-colors hover:border-green-accent/30 sm:px-4 sm:text-sm"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -360,7 +403,7 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="mb-6 flex gap-1 overflow-x-auto rounded-lg border border-card-border bg-card-bg p-1">
-        {(["overview", "users", "searches", "cache"] as Tab[]).map((tab) => (
+        {(["overview", "users", "searches", "nsfw", "cache"] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -916,6 +959,94 @@ export default function AdminDashboard() {
             {searchLogTotalPages > 1 && (
               <div className="border-t border-card-border px-4 py-3 sm:px-5">
                 <Pagination page={searchLogPage} totalPages={searchLogTotalPages} onPageChange={setSearchLogPage} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* NSFW TAB */}
+      {activeTab === "nsfw" && (
+        <div className="space-y-4">
+          <div className="rounded-xl border border-card-border bg-card-bg">
+            <div className="flex flex-col gap-1 border-b border-card-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:text-sm">
+                NSFW Profile Checks
+              </h3>
+              <span className="text-[10px] text-zinc-600 sm:text-xs">
+                {nsfwTotal > 0 && (
+                  <>Showing {(nsfwPage - 1) * NSFW_PER_PAGE + 1}–{Math.min(nsfwPage * NSFW_PER_PAGE, nsfwTotal)} of {nsfwTotal.toLocaleString()}</>
+                )}
+              </span>
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-card-border">
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Checked</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">By</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Result</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">When</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-card-border">
+                  {nsfwChecks.map((c) => (
+                    <tr key={c.id} className="transition-colors hover:bg-background/50">
+                      <td className="px-4 py-2.5 text-sm font-medium text-green-accent">u/{c.checkedUsername}</td>
+                      <td className="px-4 py-2.5 text-sm text-zinc-300">{c.performedBy}</td>
+                      <td className="px-4 py-2.5">
+                        {!c.found ? (
+                          <span className="inline-flex rounded-full bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-400">Not found</span>
+                        ) : c.isNsfw ? (
+                          <span className="inline-flex rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-400">🔞 NSFW</span>
+                        ) : (
+                          <span className="inline-flex rounded-full bg-green-accent/10 px-2 py-0.5 text-xs font-medium text-green-accent">Safe</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2.5 text-sm text-zinc-500">
+                        {new Date(c.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {nsfwChecks.length === 0 && !nsfwLoading && (
+                <p className="py-12 text-center text-sm text-zinc-600">No NSFW checks yet</p>
+              )}
+            </div>
+
+            {/* Mobile list */}
+            <div className="divide-y divide-card-border sm:hidden">
+              {nsfwChecks.map((c) => (
+                <div key={c.id} className="px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-accent">u/{c.checkedUsername}</span>
+                    <span className="text-[10px] text-zinc-600">
+                      {new Date(c.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center justify-between">
+                    <span className="text-xs text-zinc-400">by {c.performedBy}</span>
+                    {!c.found ? (
+                      <span className="inline-flex rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-medium text-zinc-400">Not found</span>
+                    ) : c.isNsfw ? (
+                      <span className="inline-flex rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">🔞 NSFW</span>
+                    ) : (
+                      <span className="inline-flex rounded-full bg-green-accent/10 px-2 py-0.5 text-[10px] font-medium text-green-accent">Safe</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {nsfwChecks.length === 0 && !nsfwLoading && (
+                <p className="py-12 text-center text-sm text-zinc-600">No NSFW checks yet</p>
+              )}
+            </div>
+
+            {nsfwTotalPages > 1 && (
+              <div className="border-t border-card-border px-4 py-3 sm:px-5">
+                <Pagination page={nsfwPage} totalPages={nsfwTotalPages} onPageChange={setNsfwPage} />
               </div>
             )}
           </div>
