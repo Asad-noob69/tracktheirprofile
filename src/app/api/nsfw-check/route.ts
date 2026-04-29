@@ -4,75 +4,69 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 
-const REDDIT_USER_AGENTS = [
-  "TrackTheirProfile/1.0",
-  "web:tracktheirprofile.com:1.0 (NSFW profile checker)",
-];
-const REDDIT_HOSTS = ["www.reddit.com", "old.reddit.com"];
 const ARCTIC_SHIFT_BASE = "https://arctic-shift.photon-reddit.com/api";
+const FETCH_TIMEOUT_MS = 8000;
 
 interface AboutResult {
   found: boolean;
   isNsfw: boolean;
+  postCount: number;
+  commentCount: number;
 }
 
-async function fetchRedditAbout(
-  host: string,
-  username: string,
-  userAgent: string
-): Promise<AboutResult | null | "not_found"> {
-  const url = `https://${host}/user/${encodeURIComponent(username)}/about.json?raw_json=1`;
+async function fetchJson(url: string): Promise<unknown> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": userAgent,
-        Accept: "application/json",
-      },
-      cache: "no-store",
-    });
-
-    if (res.status === 404) return "not_found";
+    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
     if (!res.ok) {
-      console.warn(`[nsfw-check] ${host} (${userAgent}) returned ${res.status} for ${username}`);
+      console.warn(`[nsfw-check] ${url} returned ${res.status}`);
       return null;
     }
-
-    const data = await res.json();
-    const inner = data?.data;
-    if (!inner) return null;
-
-    if (inner.is_suspended) return "not_found";
-
-    const isNsfw = Boolean(inner?.subreddit?.over_18 ?? inner?.over_18 ?? false);
-    return { found: true, isNsfw };
+    return await res.json();
   } catch (err) {
-    console.warn(`[nsfw-check] ${host} fetch failed for ${username}:`, err instanceof Error ? err.message : err);
+    console.warn(`[nsfw-check] fetch failed for ${url}:`, err instanceof Error ? err.message : err);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-async function fetchArcticShift(username: string): Promise<AboutResult | null> {
-  const url = `${ARCTIC_SHIFT_BASE}/users/search?author=${encodeURIComponent(username)}&limit=1`;
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) {
-      console.warn(`[nsfw-check] arctic-shift returned ${res.status} for ${username}`);
-      return null;
-    }
-    const data = await res.json();
-    const u = data?.data?.[0];
-    // arctic-shift only indexes a subset of users — empty result is NOT a definitive
-    // "doesn't exist", so return null (unknown) rather than a false 404.
-    if (!u) {
-      console.warn(`[nsfw-check] arctic-shift has no record for ${username}; treating as unknown`);
-      return null;
-    }
-    const isNsfw = Boolean(u.subreddit?.over_18 ?? u.over_18 ?? false);
-    return { found: true, isNsfw };
-  } catch (err) {
-    console.warn("[nsfw-check] arctic-shift fetch failed:", err instanceof Error ? err.message : err);
-    return null;
+async function checkUserViaArcticShift(username: string): Promise<AboutResult | null> {
+  const postsUrl =
+    `${ARCTIC_SHIFT_BASE}/posts/search?author=${encodeURIComponent(username)}` +
+    `&limit=100&fields=over_18,subreddit`;
+  const commentsUrl =
+    `${ARCTIC_SHIFT_BASE}/comments/search?author=${encodeURIComponent(username)}` +
+    `&limit=100&fields=subreddit`;
+
+  const [postsRaw, commentsRaw] = await Promise.all([
+    fetchJson(postsUrl),
+    fetchJson(commentsUrl),
+  ]);
+
+  if (postsRaw === null && commentsRaw === null) return null;
+
+  const posts =
+    (postsRaw as { data?: Array<{ over_18?: boolean; subreddit?: string }> } | null)?.data ?? [];
+  const comments =
+    (commentsRaw as { data?: Array<{ subreddit?: string }> } | null)?.data ?? [];
+
+  const postCount = posts.length;
+  const commentCount = comments.length;
+
+  if (postCount === 0 && commentCount === 0) {
+    return { found: false, isNsfw: false, postCount: 0, commentCount: 0 };
   }
+
+  const hasNsfwPost = posts.some((p) => p.over_18 === true);
+
+  return {
+    found: true,
+    isNsfw: hasNsfwPost,
+    postCount,
+    commentCount,
+  };
 }
 
 async function getOrCreateSessionId(): Promise<string> {
@@ -122,38 +116,11 @@ export async function GET(request: NextRequest) {
   const sessionId = await getOrCreateSessionId();
 
   try {
-    let result: AboutResult | null = null;
-    let confirmedNotFound = false;
-
-    outer: for (const ua of REDDIT_USER_AGENTS) {
-      for (const host of REDDIT_HOSTS) {
-        const r = await fetchRedditAbout(host, sanitized, ua);
-        if (r === "not_found") {
-          confirmedNotFound = true;
-          break outer;
-        }
-        if (r) {
-          result = r;
-          break outer;
-        }
-      }
-    }
-
-    if (!result && !confirmedNotFound) {
-      const arctic = await fetchArcticShift(sanitized);
-      if (arctic) result = arctic;
-    }
-
-    if (confirmedNotFound) {
-      await prisma.nsfwCheck.create({
-        data: { userId, sessionId, checkedUsername: sanitized, isNsfw: false, found: false },
-      });
-      return NextResponse.json({ username: sanitized, found: false, isNsfw: false });
-    }
+    const result = await checkUserViaArcticShift(sanitized);
 
     if (!result) {
       return NextResponse.json(
-        { error: "Reddit isn't responding right now. Try again in a moment." },
+        { error: "Couldn't reach the search service right now. Try again in a moment." },
         { status: 502 }
       );
     }
@@ -172,6 +139,8 @@ export async function GET(request: NextRequest) {
       username: sanitized,
       found: result.found,
       isNsfw: result.isNsfw,
+      postCount: result.postCount,
+      commentCount: result.commentCount,
     });
   } catch (err) {
     console.error("[nsfw-check] Failed:", err instanceof Error ? err.message : err);
