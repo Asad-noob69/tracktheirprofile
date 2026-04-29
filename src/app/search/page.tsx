@@ -34,7 +34,7 @@ const SEARCH_STAGES = [
   "Merging and deduplicating results...",
 ];
 
-const FREE_PREVIEW_COUNT = 10;
+const FREE_PREVIEW_COUNT = 7;
 const RESULTS_PER_PAGE = 20;
 
 const BLOCKED_USERNAMES = new Set(["jumpy_paramedic2552", "no-tiger7949"]);
