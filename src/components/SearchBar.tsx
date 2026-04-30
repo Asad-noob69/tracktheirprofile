@@ -17,9 +17,13 @@ export default function SearchBar({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = username.trim();
-    if (trimmed.length === 0) return;
-    router.push(`/search?username=${encodeURIComponent(trimmed)}`);
+    const cleaned = username
+      .trim()
+      .replace(/^https?:\/\/(www\.|old\.|new\.)?reddit\.com\//i, "")
+      .replace(/^\/?(u|user)\//i, "")
+      .replace(/\/+$/, "");
+    if (cleaned.length === 0) return;
+    router.push(`/search?username=${encodeURIComponent(cleaned)}`);
   };
 
   const isLarge = size === "large";

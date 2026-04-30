@@ -37,7 +37,7 @@ const SEARCH_STAGES = [
 const FREE_PREVIEW_COUNT = 7;
 const RESULTS_PER_PAGE = 20;
 
-const BLOCKED_USERNAMES = new Set(["jumpy_paramedic2552", "no-tiger7949", "just_a_freak_teen"]);
+const BLOCKED_USERNAMES = new Set(["jumpy_paramedic2552", "no-tiger7949", "just_a_freak_teen", "healthy-welcome-3518"]);
 
 function PaywallOverlay() {
   return (

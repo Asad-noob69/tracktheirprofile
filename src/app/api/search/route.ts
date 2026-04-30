@@ -62,7 +62,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Username is required" }, { status: 400 });
   }
 
-  const sanitized = username.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+  const sanitized = username
+    .trim()
+    .replace(/^https?:\/\/(www\.|old\.|new\.)?reddit\.com\//i, "")
+    .replace(/^\/?(u|user)\//i, "")
+    .replace(/\/+$/, "")
+    .replace(/[^a-zA-Z0-9_-]/g, "");
   if (sanitized.length === 0 || sanitized.length > 50) {
     return NextResponse.json({ error: "Invalid username" }, { status: 400 });
   }

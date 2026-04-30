@@ -46,7 +46,11 @@ export default function NsfwCheckPopup() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = username.trim().replace(/^u\//i, "");
+    const trimmed = username
+      .trim()
+      .replace(/^https?:\/\/(www\.|old\.|new\.)?reddit\.com\//i, "")
+      .replace(/^\/?(u|user)\//i, "")
+      .replace(/\/+$/, "");
     if (!trimmed) return;
     setLoading(true);
     setErrorMsg("");
