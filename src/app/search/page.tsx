@@ -255,7 +255,7 @@ function SearchContent() {
               </span>
               {!creditInfo.isLoggedIn && (
                 <p className="mt-1.5 text-xs text-zinc-500">
-                  <Link href="/signup" className="text-green-accent hover:underline">Sign up</Link> to get 15 more free credits
+                  <Link href="/signup" className="text-green-accent hover:underline">Sign up</Link> to get 9 more free credits
                 </p>
               )}
             </div>

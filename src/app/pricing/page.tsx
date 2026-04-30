@@ -28,8 +28,8 @@ export default function PricingPage() {
           </div>
           <ul className="mb-6 space-y-3">
             {[
-              "5 searches without an account",
-              "20 searches with a free account",
+              "1 search without an account",
+              "10 searches with a free account",
               "Preview of first 10 results per search",
               "CSV export included",
             ].map((f) => (
@@ -164,7 +164,7 @@ export default function PricingPage() {
           />
           <FaqItem
             question="Do I need an account to search?"
-            answer="No. You can perform up to 5 searches without an account. Creating a free account gives you 20 searches."
+            answer="No. You can perform 1 search without an account. Creating a free account gives you 10 searches."
           />
           <FaqItem
             question="What payment methods are accepted?"

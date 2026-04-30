@@ -19,7 +19,7 @@ model User {
   avatarUrl     String?
   role          String      @default("user") // "user", "admin"
   isPaid        Boolean     @default(false)
-  searchCredits Int         @default(20)
+  searchCredits Int         @default(10)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   searchLogs    SearchLog[]

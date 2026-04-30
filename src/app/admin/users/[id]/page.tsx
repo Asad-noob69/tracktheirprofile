@@ -95,9 +95,9 @@ export default function AdminUserDetail() {
     await fetch(`/api/admin/users/${user.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ searchCredits: 20 }),
+      body: JSON.stringify({ searchCredits: 10 }),
     });
-    setUser({ ...user, searchCredits: 20 });
+    setUser({ ...user, searchCredits: 10 });
   }
 
   if (loading) {

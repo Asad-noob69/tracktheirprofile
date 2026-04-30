@@ -102,10 +102,10 @@ export async function GET(request: NextRequest) {
     const sessionId = await getOrCreateSessionId();
     const anonRecord = await prisma.anonCredit.findUnique({ where: { sessionId } });
     const used = anonRecord?.creditsUsed ?? 0;
-    const ANON_LIMIT = 5;
+    const ANON_LIMIT = 1;
     if (used >= ANON_LIMIT) {
       return NextResponse.json(
-        { error: "Free searches used up. Sign up for 20 free credits!", creditsRemaining: 0 },
+        { error: "Free search used up. Sign up for 10 free credits!", creditsRemaining: 0 },
         { status: 403 }
       );
     }

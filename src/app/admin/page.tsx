@@ -706,7 +706,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           <span>{user.searchCredits}</span>
                           <div className="flex gap-0.5">
-                            <button onClick={() => setCredits(user.id, 20)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Reset to 20">20</button>
+                            <button onClick={() => setCredits(user.id, 10)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Reset to 10">10</button>
                             <button onClick={() => setCredits(user.id, 50)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Set to 50">50</button>
                             <button onClick={() => setCredits(user.id, 100)} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-700" title="Set to 100">100</button>
                           </div>

@@ -129,8 +129,8 @@ export default function Home() {
               price="$0"
               period=""
               features={[
-                "5 searches (no account needed)",
-                "20 searches with free account",
+                "1 search (no account needed)",
+                "10 searches with free account",
                 "Preview of first 10 results",
                 "CSV export included",
               ]}
