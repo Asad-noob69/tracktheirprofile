@@ -98,10 +98,6 @@ export default function NsfwCheckPopup() {
 
         {stage === "prompt" && (
           <>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-green-accent/20 bg-green-accent/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-green-accent">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-accent" />
-              Quick check
-            </div>
             <h3 className="mb-2 pr-6 text-base font-bold leading-snug text-foreground">
               Do you wanna know if your profile is marked as NSFW or not?
             </h3>
